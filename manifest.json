@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Code Snippet and Alt Text Toggle",
+  "version": "1.0",
+  "description": "Paste code snippets and toggle alt text visibility for images",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["foreground.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "storage": {}
+  }
+

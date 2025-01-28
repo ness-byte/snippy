@@ -1,0 +1,108 @@
+/* Set the size of the popup */
+body {
+  width: 450px;  /* Set the width of the popup */
+  height: 500px; /* Set the height of the popup */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Flex container for side-by-side layout */
+#popup {
+  display: flex;
+  justify-content: space-between;
+  height: 100%; /* Ensure the popup fills the height */
+  padding: 20px;
+}
+
+/* Styling for each section */
+#code-section {
+  width: 70%; /* Code section takes 65% of the width */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+#icons-section {
+  width: 20%; /* Icons section takes 30% of the width */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+}
+
+/* Flexbox for buttons inside each section */
+#code-snippet-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 buttons per row for the code section */
+  gap: 5px;
+  max-height: 80%; /* Adjust if necessary */
+  overflow-y: visible; /* Scroll if there are too many buttons */
+}
+
+#icon-snippet-list {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr; /* 1 button per row for the icons section */
+  gap: 5px;
+  max-height: 80%; /* Adjust if necessary */
+  align-items: center;
+  overflow-y: visible; /* Scroll if there are too many buttons */
+}
+
+/* Styling for each button */
+.snippet-button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  width: 60px;  /* Fixed width for square button */
+  height: 60px; /* Fixed height for square button */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle drop shadow */
+  transition: all 0.3s ease; /* Smooth transition for hover and click states */
+}
+
+/* Hover state */
+.snippet-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+  transform: translateY(-2px); /* Lift button slightly on hover */
+}
+
+/* Active (click) state */
+.snippet-button:active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow when clicked */
+  transform: translateY(2px); /* Slightly move the button down */
+}
+
+/* Optional: If you have icons inside buttons */
+.snippet-button img {
+  width: 50%;   /* Keep image inside the button */
+  height: 50%;  /* Maintain aspect ratio */
+  object-fit: contain;
+}
+
+.snippet-button span {
+  font-size: 18px;
+  font-family: monospace;
+}
+
