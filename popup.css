@@ -1,18 +1,19 @@
 /* Set the size of the popup */
 body {
-  width: 450px;  /* Set the width of the popup */
+  width: 400px;  /* Set the width of the popup */
   height: 500px; /* Set the height of the popup */
-  margin: 0;
-  padding: 0;
+  margin: 10;
+  padding: 10;
   overflow: hidden;
 }
 
 /* Flex container for side-by-side layout */
 #popup {
   display: flex;
-  justify-content: space-between;
-  height: 100%; /* Ensure the popup fills the height */
-  padding: 20px;
+  justify-content: space-evenly;
+  align-items: stretch;
+  height: 90%; /* Ensure the popup fills the height */
+  /* padding: 40px; */
 }
 
 /* Styling for each section */
@@ -24,6 +25,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 #icons-section {
@@ -50,6 +52,7 @@ h2 {
   gap: 5px;
   max-height: 80%; /* Adjust if necessary */
   overflow-y: visible; /* Scroll if there are too many buttons */
+  justify-items: center;
 }
 
 #icon-snippet-list {
@@ -94,15 +97,29 @@ h2 {
   transform: translateY(2px); /* Slightly move the button down */
 }
 
-/* Optional: If you have icons inside buttons */
+/* For images inside buttons */
 .snippet-button img {
-  width: 50%;   /* Keep image inside the button */
-  height: 50%;  /* Maintain aspect ratio */
-  object-fit: contain;
+  width: 80%;  /* Make image fill the button */
+  height: 80%; /* Make image fill the button */
+  object-fit: contain; /* Maintain aspect ratio */
+  display: block; /* Remove space below image */
 }
 
+/* For icons inside buttons */
+.snippet-button span {
+  width: 100%;  /* Ensure the icon fills the button */
+  height: 100%; /* Ensure the icon fills the button */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #434343
+}
+
+/* Optional: Ensures icons scale properly if you're using font size instead */
+.snippet-button span, .snippet-button img {
+  font-size: 38px; /* Adjust icon size */
+}/* 
 .snippet-button span {
   font-size: 18px;
   font-family: monospace;
-}
-
+} */
