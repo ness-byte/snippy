@@ -40,7 +40,7 @@
   <p align="center">
     I'm the wiz, nobody beats me!
     <br />
-    <a href="https://github.com/ness-byte/snippy"><strong>Explore the repo »</strong></a>
+    <a href="https://github.com/ness-byte/snippy"><strong>Download tool</strong></a>
     <br />
     <br />
     <a href="https://github.com/ness-byte/snippy/issues/new?labels=bug&template=bug-report---.md">Report bug</a>
