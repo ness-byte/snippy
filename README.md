@@ -85,7 +85,7 @@ This tool will contain the following:
 * Icon code snippets
 * Alt text visibility toggle
 
-Please note that this is a streamlined version of the original tool, with some of the older features removed. Use [request feature][request-feature]) to request a new feature, or [report bug][report-bug] if there's something wrong with the tool.
+Please note that this is a streamlined version of the original tool, with some of the older features removed. Use [request feature][request-feature] to request a new feature, or [report bug][report-bug] if there's something wrong with the tool.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -109,10 +109,10 @@ Please note that this is a streamlined version of the original tool, with some o
 5. To load the new extension, click the <b>Load unpacked</b> button and navigate to the `snippy-main` folder you unzipped earlier.
 6. Finally, head over to your extensions (the little puzzle piece) and then pin the ACUO design library extension wizard to your toolbar. Now it's easily accessible when you need it.
 
-<h4>Hot tip #1: Add a hotkey for the extension</h4>
+<h3>Hot tip #1: Add a hotkey for the extension</h3>
 On your extensions page, click the burger menu on the left, then click <b>Keyboard shortcuts</b>. Choose whatever hotkey you like (e.g. ctrl-D), then click <b>Update</b>.
 
-<h4>Hot tip #2: Alt text visibility</h4>
+<h3>Hot tip #2: Alt text visibility</h3>
 Refresh the page after ticking the checkbox to activate alt text visibility.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -122,6 +122,7 @@ Refresh the page after ticking the checkbox to activate alt text visibility.
 
 - [X] Add readme
     - [ ] Add screenshots to instructions
+  [ ] Add any missing features
 - [ ] Make pretty tooltips
 
 See the [open issues](https://github.com/ness-byte/snippy/issues) for a full list of proposed features (and known issues).
