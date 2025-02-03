@@ -1,9 +1,9 @@
 {
   "name": "ACUO design library extension rebuild_v1",
   "version": "1.0",
-  "description": "One small leap for mankind",
+  "description": "One smallish leap for mankind",
   "manifest_version": 3,
-  "author": "Agnes Au and Alana Faigen",
+  "author": "Agnes Au",
   "action": {
     "default_popup": "popup.html",
     "default_title": "ACUO design library extension",

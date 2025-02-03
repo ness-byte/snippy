@@ -1,7 +1,7 @@
 /* Set the size of the popup */
 body {
   width: 400px;  /* Set the width of the popup */
-  height: 500px; /* Set the height of the popup */
+  height: 580px; /* Set the height of the popup */
   margin: 10;
   padding: 10;
   overflow: hidden;
@@ -55,6 +55,14 @@ h2 {
   justify-items: center;
 }
 
+.blank-button {
+  background: transparent;   /* Make it invisible */
+  border: none;              /* Remove border */
+  width: 50px;               /* Match size of other buttons */
+  height: 50px;              /* Match size of other buttons */
+  display: block;            /* Make sure it's displayed as a block element */
+}
+
 #icon-snippet-list {
   display: grid;
   justify-items: center;
@@ -75,6 +83,7 @@ h2 {
   justify-content: center;
   border-radius: 5px;
   cursor: pointer;
+  position: relative;
   text-align: center;
   font-size: 14px;
   color: #333;
@@ -123,3 +132,4 @@ h2 {
   font-size: 18px;
   font-family: monospace;
 } */
+
