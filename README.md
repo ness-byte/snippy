@@ -122,7 +122,7 @@ Refresh the page after ticking the checkbox to activate alt text visibility.
 
 - [X] Add readme
     - [ ] Add screenshots to instructions
-  [ ] Add any missing features
+- [ ] Add any missing features
 - [ ] Make pretty tooltips
 
 See the [open issues](https://github.com/ness-byte/snippy/issues) for a full list of proposed features (and known issues).
