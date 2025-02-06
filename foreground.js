@@ -2,16 +2,6 @@
 function showAltText() {
   const images = document.querySelectorAll('img');
 
-/*  images.forEach(img => {
-    // Check if alt text element already exists
-    let altTextElement = img.nextElementSibling;
-    if (!altTextElement || !altTextElement.classList.contains('alt-text')) {
-      altTextElement = document.createElement('span');
-      altTextElement.classList.add('alt-text');
-      // img.parentNode.insertBefore(altTextElement, img.nextSibling);  // Insert after the image
-    }
-*/
-
 images.forEach((img) => {
   if (img.alt) {
     let altText = document.createElement('span');

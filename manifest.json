@@ -4,6 +4,7 @@
   "description": "I'm the wiz, nobody beats me!",
   "manifest_version": 3,
   "author": "Agnes Au",
+  
   "action": {
     "default_popup": "popup.html",
     "default_title": "ACUO design library extension",
@@ -23,6 +24,6 @@
 
   "storage": {
   }
-
-  }
+  
+}
 

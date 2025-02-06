@@ -1,30 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snippet Extension</title>
-  <link rel="stylesheet" href="popup.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Snippet Extension</title>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
-  <div id="popup">
-    <div id="code-section">
-      <h2>Code</h2>
-      <div id="code-snippet-list">
-        <!-- Dynamically populate buttons here -->
-      </div>
+    <div id="tabs">
+        <button id="default-tab" class="active">Default</button>
+        <button id="custom-tab">Custom</button>
     </div>
-    <div id="icon-section">
-      <h2>Icons</h2>
-      <div id="icon-snippet-list">
-        <!-- Dynamically populate buttons here -->
-      </div>
+
+    <div id="popup">
+        <div id="default-view">
+            <div id="code-section">
+                <div id="code-snippet-list"></div>
+            </div>
+            <div id="icons-section">
+                <div id="icon-snippet-list"></div>
+            </div>
+        </div>
+
+        <div id="custom-view" style="display: none">
+            <div id="custom-section"></div>
+        </div>
     </div>
-  </div>
-  <div style="padding-top: 20px">
-    <input type="checkbox" id="altTextToggle"> Show alt text on images
-  </div>
-  <script src="popup.js"></script>
+
+    <div class="footer">
+        <label>
+            <input type="checkbox" id="altTextCheckbox"> Show Alt Text
+        </label>
+        <div>
+            <button id="reset-custom-btn">Reset Custom</button>
+            <button id="refresh-btn">Refresh Files</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal">&times;</span>
+            <h3>Edit Custom Button</h3>
+            <select id="code-select">
+                <option value="">Custom Code</option>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+            <textarea id="user-code" placeholder="Enter your custom code here..."></textarea>
+            <button id="save-btn">Save</button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
 </body>
 </html>

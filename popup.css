@@ -2,40 +2,44 @@
 body {
   width: 400px;  /* Set the width of the popup */
   height: 580px; /* Set the height of the popup */
-  margin: 10;
-  padding: 10;
+  margin: 10px;
+  padding: 10px;
   overflow: hidden;
 }
 
-/* Flex container for side-by-side layout */
-#popup {
+*{
+  margin: 5;
+  padding: 5;
+  box-sizing: border-box;
+}
+
+#default-view {
   display: flex;
   justify-content: space-evenly;
-  align-items: stretch;
-  height: 90%; /* Ensure the popup fills the height */
-  /* padding: 40px; */
+  height: calc(100% - 20px); /* Account for body margin/padding */
+  gap: 5px; /* Space between sections */
+}
+
+#custom-view {
+  display: flex;
+  justify-content: center;
+  height: calc(100% - 20px); /* Account for body margin/padding */
 }
 
 /* Styling for each section */
 #code-section {
-  width: 70%; /* Code section takes 65% of the width */
-  padding: 5px;
+  width: 280px; /* Code section takes most of the width */
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   align-items: center;
 }
 
 #icons-section {
-  width: 20%; /* Icons section takes 30% of the width */
-  padding: 5px;
+  width: 85px; /* Icons section takes remaining width */
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   align-items: center;
 }
 
@@ -43,34 +47,27 @@ h2 {
   text-align: center;
   font-size: 18px;
   color: #333;
+  margin: 0 0 10px 0;
+  width: 100%;
 }
 
 /* Flexbox for buttons inside each section */
 #code-snippet-list {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 buttons per row for the code section */
+  grid-template-columns: repeat(4, 1fr);
   gap: 5px;
-  max-height: 80%; /* Adjust if necessary */
-  overflow-y: visible; /* Scroll if there are too many buttons */
+  width: 100%;
   justify-items: center;
-}
-
-.blank-button {
-  background: transparent;   /* Make it invisible */
-  border: none;              /* Remove border */
-  width: 50px;               /* Match size of other buttons */
-  height: 50px;              /* Match size of other buttons */
-  display: block;            /* Make sure it's displayed as a block element */
+  overflow: hidden;
 }
 
 #icon-snippet-list {
   display: grid;
-  justify-items: center;
-  grid-template-columns: 1fr; /* 1 button per row for the icons section */
+  grid-template-columns: 1fr;
   gap: 5px;
-  max-height: 80%; /* Adjust if necessary */
-  align-items: center;
-  overflow-y: visible; /* Scroll if there are too many buttons */
+  width: 100%;
+  justify-items: center;
+  overflow: hidden;
 }
 
 /* Styling for each button */
@@ -115,21 +112,167 @@ h2 {
 }
 
 /* For icons inside buttons */
-.snippet-button span {
+.snippet-button span.material-symbols-outlined {
   width: 100%;  /* Ensure the icon fills the button */
   height: 100%; /* Ensure the icon fills the button */
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #434343
+  color: #434343;
+  font-size: 36px;
 }
 
-/* Optional: Ensures icons scale properly if you're using font size instead */
-.snippet-button span, .snippet-button img {
-  font-size: 38px; /* Adjust icon size */
-}/* 
-.snippet-button span {
-  font-size: 18px;
-  font-family: monospace;
-} */
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
 
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+  position: relative;
+}
+
+#save-btn {
+  margin-top: 10px;
+  padding: 10px;
+}
+
+#closeModal {
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#user-code {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+/* Add these styles to your existing popup.css */
+
+/* Tab styling */
+#tabs {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+#tabs button {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+#tabs button.active {
+  background: #fff;
+  border-bottom: none;
+}
+
+/* Custom button grid */
+#custom-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  padding: 10px;
+}
+
+.custom-button {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  transition: all 0.3s ease; /* Smooth transition for hover and click states */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+}
+
+/* Hover state */
+.custom-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+  transform: translateY(-2px); /* Lift button slightly on hover */
+}
+
+/* Active (click) state */
+.custom-button:active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow when clicked */
+  transform: translateY(2px); /* Slightly move the button down */
+}
+
+
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+}
+
+#user-code {
+  width: 100%;
+  height: 150px;
+  margin: 10px 0;
+  font-family: monospace;
+}
+
+/* Footer styling */
+.footer {
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer button {
+  padding: 5px 10px;
+  margin-left: 10px;
+}
