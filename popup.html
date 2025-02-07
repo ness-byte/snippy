@@ -9,31 +9,18 @@
 </head>
 <body>
     <div id="tabs">
-        <button id="default-tab" class="active">Default</button>
-        <button id="custom-tab">Custom</button>
+        <button id="buttons-tab" class="active">Buttons</button>
         <button id="search-tab">Search</button>
     </div>
 
     <div id="popup">
-        <div id="default-view">
-            <div id="code-section">
-                <div id="code-snippet-list"></div>
-            </div>
-            <div id="icons-section">
-                <div id="icon-snippet-list"></div>
-            </div>
-        </div>
-
-        <div id="custom-view" style="display: none">
-            <div id="custom-section"></div>
+        <div id="buttons-view">
+            <div id="snippet-grid"></div>
         </div>
 
         <div id="search-view" style="display: none">
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search snippets...">
-<!--                 <div class="search-type">
-                    <label><input type="checkbox" id="include-icons" checked> Include icons</label>
-                </div> -->
             </div>
             <div id="search-results"></div>
         </div>
@@ -52,20 +39,25 @@
     <div id="modal" class="modal">
         <div class="modal-content">
             <span id="closeModal">&times;</span>
-            <h3>Edit Custom Button</h3>
-            <select id="code-select">
-                <option value="">Select a snippet...</option>
-            </select>
-            <textarea id="user-code" placeholder="Enter your custom code here..."></textarea>
+            <h3>Edit Button</h3>
+            <div class="modal-body">
+                <label for="icon-select">Choose Icon:</label>
+                <select id="icon-select">
+                    <option value="">Loading icons...</option>
+                </select>
+                
+                <label for="button-label">Button Label:</label>
+                <input type="text" id="button-label" placeholder="Enter button label">
+                
+                <textarea id="snippet-code" placeholder="Snippet code will appear here..." readonly></textarea>
+            </div>
             <div class="modal-buttons">
-                <button id="clear-btn">Clear</button>
+                <button id="reset-btn">Reset to Default</button>
                 <button id="save-btn">Save</button>
             </div>
         </div>
     </div>
 
     <div id="notification" class="notification"></div>
-
-    <script src="popup.js"></script>
 </body>
 </html>

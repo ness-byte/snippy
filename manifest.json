@@ -1,6 +1,6 @@
 {
-  "name": "ACUO design library extension rebuild_v1",
-  "version": "1.0",
+  "name": "ACUO design library extension rebuild_v2",
+  "version": "2.0",
   "description": "I'm the wiz, nobody beats me!",
   "manifest_version": 3,
   "author": "Agnes Au",
@@ -23,7 +23,10 @@
   ],
 
   "storage": {
-  }
+  },
   
+  "host_permissions": [
+    "https://api.github.com/*",
+    "https://raw.githubusercontent.com/*"
+  ]
 }
-
