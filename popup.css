@@ -146,6 +146,18 @@ h2 {
 #save-btn {
   margin-top: 10px;
   padding: 10px;
+  transition: all 0.3s ease;
+}
+
+#clear-btn {
+  margin-top: 10px;
+  padding: 10px;
+  /* background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease; */
 }
 
 #closeModal {
@@ -277,8 +289,6 @@ select {
   margin-left: 10px;
 }
 
-/* ... (keep existing CSS) ... */
-
 /* Search tab styling */
 #search-view {
   display: none;
@@ -312,6 +322,88 @@ select {
   height: 100%;
 }
 
+.search-result {
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-result:hover {
+  background-color: #f5f5f5;
+}
+/* Search container styling */
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.search-type {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.search-type label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+/* Notification styling */
+.notification {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1000;
+}
+
+.notification.info {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.notification.warning {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffe0b2;
+}
+
+.notification.error {
+  background-color: #fdecea;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+}
+
+/* Modal select styling */
+.modal-selects {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.modal-selects select {
+  flex: 1;
+}
+
+/* No results message */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
 /* Refresh button states */
 #refresh-btn {
   position: relative;
@@ -334,19 +426,6 @@ select {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
-}
-
-#clear-modal-btn {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#clear-modal-btn:hover {
-  background-color: #e0e0e0;
 }
 
 /* Empty state for search results */

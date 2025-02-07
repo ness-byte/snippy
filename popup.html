@@ -27,12 +27,23 @@
         <div id="custom-view" style="display: none">
             <div id="custom-section"></div>
         </div>
+
+        <div id="search-view" style="display: none">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search snippets...">
+<!--                 <div class="search-type">
+                    <label><input type="checkbox" id="include-icons" checked> Include icons</label>
+                </div> -->
+            </div>
+            <div id="search-results"></div>
+        </div>
     </div>
+
     <div class="footer">
         <label>
             <input type="checkbox" id="altTextCheckbox"> Show Alt Text
         </label>
-        <div>
+        <div class="footer-buttons">
             <button id="reset-custom-btn">Reset Custom</button>
             <button id="refresh-btn">Refresh Files</button>
         </div>
@@ -43,15 +54,18 @@
             <span id="closeModal">&times;</span>
             <h3>Edit Custom Button</h3>
             <select id="code-select">
-                <option value="">Custom Code</option>
-                <!-- Options will be populated by JavaScript -->
+                <option value="">Select a snippet...</option>
             </select>
             <textarea id="user-code" placeholder="Enter your custom code here..."></textarea>
-            <button id="save-btn">Save</button>
+            <div class="modal-buttons">
+                <button id="clear-btn">Clear</button>
+                <button id="save-btn">Save</button>
+            </div>
         </div>
     </div>
+
+    <div id="notification" class="notification"></div>
 
     <script src="popup.js"></script>
 </body>
 </html>
- 

@@ -1,3 +1,8 @@
+// Add these constants at the top of your file
+const CACHE_KEY = 'snippets_cache';
+const CACHE_TIMESTAMP_KEY = 'snippets_timestamp';
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
 document.addEventListener("DOMContentLoaded", async function() {
     const defaultView = document.getElementById("default-view");
     const customView = document.getElementById("custom-view");
@@ -13,190 +18,313 @@ document.addEventListener("DOMContentLoaded", async function() {
     const altTextCheckbox = document.getElementById("altTextCheckbox");
     const codeSection = document.getElementById("code-snippet-list");
     const iconSection = document.getElementById("icon-snippet-list");
+    const searchTab = document.getElementById("search-tab");
+    const searchView = document.getElementById("search-view");
+    const searchInput = document.getElementById("search-input");
+    const searchResults = document.getElementById("search-results");
+    const clearModalBtn = document.getElementById("clear-btn");
+    const notification = document.getElementById("notification");
     let currentEditingButton = null;
 
+ 
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    
+
     // Default code snippets (populate from HTML files)
-const codeSnippets = [
-    { 
-        snippet: "snippets/image.html",
-        iconClass: 'image',
-        title: 'Image'
-    },
-    {
-        snippet: "snippets/image-carousel.html",
-        iconClass: 'photo_library',
-        title: 'Image carousel'
-    },
-    {
-        snippet: "snippets/table.html",
-        iconClass: 'view_week',
-        title: 'Table'
-    },
-    {
-        snippet: "snippets/table-levels.html",
-        iconClass: 'view_quilt',
-        title: 'Table, varying levels of text'
-    },
+    const allSnippets = [
+        { 
+            type: 'code',
+            snippet: "snippets/image.html",
+            iconClass: 'image',
+            title: 'Image'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/image-carousel.html",
+            iconClass: 'photo_library',
+            title: 'Image carousel'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/table.html",
+            iconClass: 'view_week',
+            title: 'Table'
+        },
+        {
+            type: 'code',snippet: "snippets/table-levels.html",
+
+            iconClass: 'view_quilt',
+            title: 'Table, varying levels of text'
+        },
+        
+        {
+            type: 'code',
+            snippet: "snippets/echo360-carousel.html",
+            iconClass: 'view_carousel',
+            title: 'Echo360 carousel',
+            color: '#78A75A'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/youtube.html",
+            iconClass: 'smart_display',
+            title: 'YouTube or external vid',
+            color: '#D16D6A'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/youtube-carousel.html",
+            iconClass: 'view_carousel',
+            title: 'YouTube vid carousel',
+            color: '#D16D6A'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/tabs.html",
+            iconClass: 'tab',
+            title: 'Tabs'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/accordion.html",
+            iconClass: 'wysiwyg',
+            title: 'Accordion'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/click-reveal.html",
+            iconClass: 'preview',
+            title: 'Click and reveal'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/quiz.html",
+            iconClass: 'quiz',
+            title: 'Inline quiz'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/activity-box.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-activity.svg",
+            title: 'Activity box'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/take-note-box.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-takenote.svg",
+            title: 'Take note box'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/tools-box.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-tools.svg",
+            title: 'Tools box'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/reflect-box.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-reflect.svg",
+            title: 'Reflect box'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/important-box.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-important.svg",
+            title: 'Important box'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/block-quote.html",
+            iconClass: 'format_align_right',
+            title: 'Block quote'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/pull-quote.html",
+            iconClass: 'format_quote',
+            title: 'Pull quote'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/essential-reading.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-read.svg",
+            title: 'Essential reading well',
+            borderStyle: 'solid',
+            borderColour: '#3C1053'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/optional-reading.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-read.svg",
+            title: 'Optional reading well',
+            borderStyle: 'solid',
+            borderColour: '#F1BC1ECC'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/combo-reading.html",
+            src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-read.svg",
+            title: 'Combo reading well',
+            borderStyle: 'gradient'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/disclaimer.html",
+            iconClass: 'breaking_news',
+            title: 'Disclaimer well',
+            borderStyle: 'solid',
+            borderColour: '#f2120c'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/hanging-indent.html",
+            iconClass: 'format_indent_increase',
+            title: 'APA7 hanging indent'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/yellow-box.html",
+            iconClass: 'square',
+            color: '#F1BC1ECC',
+            title: 'Yellow border box'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/transcript.html",
+            iconClass: 'settings_accessibility',
+            title: 'Transcript'
+        },
+        {
+            type: 'code',
+            snippet: "snippets/transcript-page.html",
+            iconClass: 'description',
+            title: 'Transcript page'
+        },
+        {
+            type: 'icon',
+            snippet: "snippets/activity-icon.html",
+            src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-activity.svg',
+            title: 'Activity icon'
+        },
+        {
+            type: 'icon',
+            snippet: "snippets/watch-icon.html",
+            src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-watch.svg',
+            title: 'Watch icon'
+        },
+        {
+            type: 'icon',
+            snippet: "snippets/listen-icon.html",
+            src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-listen.svg',
+            title: 'Listen icon'
+        },
+        {
+            type: 'icon',
+            snippet: "snippets/read-icon.html",
+            src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-read.svg',
+            title: 'Read icon'
+        },
+        {
+            type: 'icon',
+            iconClass: 'remove',
+            snippet: "snippets/en-dash.html",
+            title: 'en dash'
+        }
+        ];
+
+        // Load preferred tab
+        chrome.storage.local.get('preferredTab', function(data) {
+            const tab = data.preferredTab || 'default';
+            switchToTab(tab);
+        });
     
-    {
-        snippet: "snippets/echo360-carousel.html",
-        iconClass: 'view_carousel',
-        title: 'Echo360 carousel',
-        color: '#78A75A'
-    },
-    {
-        snippet: "snippets/youtube.html",
-        iconClass: 'smart_display',
-        title: 'YouTube or external vid',
-        color: '#D16D6A'
-    },
-    {
-        snippet: "snippets/youtube-carousel.html",
-        iconClass: 'view_carousel',
-        title: 'YouTube vid carousel',
-        color: '#D16D6A'
-    },
-    {
-        snippet: "snippets/tabs.html",
-        iconClass: 'tab',
-        title: 'Tabs'
-    },
-    {
-        snippet: "snippets/accordion.html",
-        iconClass: 'wysiwyg',
-        title: 'Accordion'
-    },
-    {
-        snippet: "snippets/click-reveal.html",
-        iconClass: 'preview',
-        title: 'Click and reveal'
-    },
-    {
-        snippet: "snippets/quiz.html",
-        iconClass: 'quiz',
-        title: 'Inline quiz'
-    },
-    {
-        snippet: "snippets/activity-box.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-activity.svg",
-        title: 'Activity box'
-    },
-    {
-        snippet: "snippets/take-note-box.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-takenote.svg",
-        title: 'Take note box'
-    },
-    {
-        snippet: "snippets/tools-box.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-tools.svg",
-        title: 'Tools box'
-    },
-    {
-        snippet: "snippets/reflect-box.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-reflect.svg",
-        title: 'Reflect box'
-    },
-    {
-        snippet: "snippets/important-box.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-important.svg",
-        title: 'Important box'
-    },
-    {
-        snippet: "snippets/block-quote.html",
-        iconClass: 'format_align_right',
-        title: 'Block quote'
-    },
-    {
-        snippet: "snippets/pull-quote.html",
-        iconClass: 'format_quote',
-        title: 'Pull quote'
-    },
-    {
-        snippet: "snippets/essential-reading.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-read.svg",
-        title: 'Essential reading well',
-        borderStyle: 'solid',
-        borderColour: '#3C1053'
-    },
-    {
-        snippet: "snippets/optional-reading.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-read.svg",
-        title: 'Optional reading well',
-        borderStyle: 'solid',
-        borderColour: '#F1BC1ECC'
-    },
-    {
-        snippet: "snippets/combo-reading.html",
-        src: "https://cei-dlc.acucontenthub.acu.edu.au/unitcontent/SharedAssets/Icons/icon-read.svg",
-        title: 'Combo reading well',
-        borderStyle: 'gradient'
-    },
-    {
-        snippet: "snippets/disclaimer.html",
-        iconClass: 'breaking_news',
-        title: 'Disclaimer well',
-        borderStyle: 'solid',
-        borderColour: '#f2120c'
-    },
-    {
-        snippet: "snippets/hanging-indent.html",
-        iconClass: 'format_indent_increase',
-        title: 'APA7 hanging indent'
-    },
-    {
-        snippet: "snippets/yellow-box.html",
-        iconClass: 'square',
-        color: '#F1BC1ECC',
-        title: 'Yellow border box'
-    },
-    {
-        snippet: '',
-        title: ''
-    },
-    {
-        snippet: "snippets/transcript.html",
-        iconClass: 'settings_accessibility',
-        title: 'Transcript'
-    },
-    {
-        snippet: "snippets/transcript-page.html",
-        iconClass: 'description',
-        title: 'Transcript page'
-    }
+        // Pin tab function
+        function pinTab(tabName) {
+            chrome.storage.local.set({ preferredTab: tabName });
+        }
     
-    ];
+        // Tab switching function
+        function switchToTab(tabName) {
+            // Hide all views
+            defaultView.style.display = 'none';
+            customView.style.display = 'none';
+            searchView.style.display = 'none';
+            
+            // Remove active class from all tabs
+            defaultTab.classList.remove('active');
+            customTab.classList.remove('active');
+            searchTab.classList.remove('active');
+            
+            // Show selected view and activate tab
+            switch(tabName) {
+                case 'default':
+                    defaultView.style.display = 'flex';
+                    defaultTab.classList.add('active');
+                    break;
+                case 'custom':
+                    customView.style.display = 'flex';
+                    customTab.classList.add('active');
+                    break;
+                case 'search':
+                    searchView.style.display = 'flex';
+                    searchTab.classList.add('active');
+                    break;
+            }
+        }
     
-    const iconSnippets = [{
-        snippet: "snippets/activity-icon.html",
-        src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-activity.svg',
-        title: 'Activity icon'
-    },
-    {
-        snippet: "snippets/watch-icon.html",
-        src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-watch.svg',
-        title: 'Watch icon'
-    },
-    {
-        snippet: "snippets/listen-icon.html",
-        src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-listen.svg',
-        title: 'Listen icon'
-    },
-    {
-        snippet: "snippets/read-icon.html",
-        src: 'https://cei-dlc.acucontenthub.acu.edu.au/ShortCourses/Icons/icon-read.svg',
-        title: 'Read icon'
-    },
-    {
-        iconClass: 'remove',
-        snippet: "snippets/en-dash.html",
-        title: 'en dash'
-    }
-    ];
+        // Tab click handlers
+        defaultTab.addEventListener('click', () => switchToTab('default'));
+        customTab.addEventListener('click', () => switchToTab('custom'));
+        searchTab.addEventListener('click', () => switchToTab('search'));
+    
+// Modified search functionality
+searchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    searchResults.innerHTML = '';
+    
+    const matchingSnippets = allSnippets.filter(snippet => 
+        snippet.title && snippet.title.toLowerCase().includes(query)
+    );
+    
+    
+    // Create text list instead of buttons
+    matchingSnippets.forEach(snippet => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'search-result';
+        resultDiv.textContent = snippet.title;
+        
+        // Add click handler to copy snippet
+        resultDiv.addEventListener('click', async () => {
+            if (snippet.snippet) {
+                const content = await fetchSnippetContent(snippet.snippet);
+                copyToClipboard(content);
+                // Show feedback
+                const originalText = resultDiv.textContent;
+                resultDiv.textContent = 'Copied!';
+                setTimeout(() => resultDiv.textContent = originalText, 1000);
+            }
+        });
+        
+        searchResults.appendChild(resultDiv);
+    });
+});
+        // Clear modal button
+        clearModalBtn.addEventListener('click', () => {
+            userCode.value = '';
+            codeSelect.value = '';
+        });
 
         // Initialize dropdown with code snippets
         function initializeCodeSelect() {
             codeSelect.innerHTML = '<option value="">Select a snippet...</option>';
-            codeSnippets.forEach((snippet) => {
+            allSnippets.forEach((snippet) => {
                 if (snippet.snippet && snippet.title) {
                     const option = document.createElement('option');
                     option.value = JSON.stringify({
@@ -320,61 +448,57 @@ const codeSnippets = [
               }
         }
     
-        // Save button functionality
-        saveBtn.addEventListener('click', async () => {
-            if (currentEditingButton) {
-                const index = currentEditingButton.getAttribute('data-index');
-                const content = userCode.value;
-                
-                if (content.trim()) {
-                    const label = prompt('Enter button label:', 'Custom') || 'Custom';
-                    let iconClass = '', src = '', color = '';
-                    
-                    // Get icon/image data either from dropdown or existing button
-                    if (codeSelect.value) {
-                        const selectedData = JSON.parse(codeSelect.value);
-                        iconClass = selectedData.iconClass || '';
-                        src = selectedData.src || '';
-                        color = selectedData.color || '';
-                    } else {
-                        iconClass = currentEditingButton.getAttribute('data-icon-class') || '';
-                        src = currentEditingButton.getAttribute('data-src') || '';
-                        color = currentEditingButton.getAttribute('data-color') || '';
-                    }
-                    
-                    // Save all data
-                    const buttonData = {
-                        content,
-                        label,
-                        iconClass,
-                        src,
-                        color
-                    };
-                    
-                    localStorage.setItem(`customButton_${index}`, JSON.stringify(buttonData));
-                    
-                    // Update button
-                    currentEditingButton.setAttribute('data-snippet', content);
-                    currentEditingButton.setAttribute('data-icon-class', iconClass);
-                    currentEditingButton.setAttribute('data-src', src);
-                    currentEditingButton.setAttribute('data-color', color);
-                    updateButtonAppearance(currentEditingButton, label, iconClass, src, color);
-                } else {
-                    // Handle empty content - reset button to empty state
-                    localStorage.removeItem(`customButton_${index}`);
-                    currentEditingButton.removeAttribute('data-snippet');
-                    currentEditingButton.removeAttribute('data-icon-class');
-                    currentEditingButton.removeAttribute('data-src');
-                    currentEditingButton.removeAttribute('data-color');
-                    currentEditingButton.textContent = 'Empty';
-                }
-                
-                modal.style.display = 'none';
-                currentEditingButton = null;
-                userCode.value = '';
-                codeSelect.value = '';
+    // Save button functionality (simplified)
+saveBtn.addEventListener('click', async () => {
+    if (currentEditingButton) {
+        const index = currentEditingButton.getAttribute('data-index');
+        const content = userCode.value;
+        
+        if (content.trim()) {
+            const label = prompt('Enter button label:', 'Custom') || 'Custom';
+            let iconClass = '', src = '', color = '';
+            
+            // Get icon/image data from dropdown if selected
+            if (codeSelect.value) {
+                const selectedData = JSON.parse(codeSelect.value);
+                iconClass = selectedData.iconClass || '';
+                src = selectedData.src || '';
+                color = selectedData.color || '';
             }
-        });
+            
+            // Save all data
+            const buttonData = {
+                content,
+                label,
+                iconClass,
+                src,
+                color
+            };
+            
+            localStorage.setItem(`customButton_${index}`, JSON.stringify(buttonData));
+            
+            // Update button
+            currentEditingButton.setAttribute('data-snippet', content);
+            currentEditingButton.setAttribute('data-icon-class', iconClass);
+            currentEditingButton.setAttribute('data-src', src);
+            currentEditingButton.setAttribute('data-color', color);
+            updateButtonAppearance(currentEditingButton, label, iconClass, src, color);
+        } else {
+            // Handle empty content
+            localStorage.removeItem(`customButton_${index}`);
+            currentEditingButton.removeAttribute('data-snippet');
+            currentEditingButton.removeAttribute('data-icon-class');
+            currentEditingButton.removeAttribute('data-src');
+            currentEditingButton.removeAttribute('data-color');
+            currentEditingButton.textContent = 'Empty';
+        }
+        
+        modal.style.display = 'none';
+        currentEditingButton = null;
+        userCode.value = '';
+        codeSelect.value = '';
+    }
+});
     
         // Reset custom buttons
         resetCustomBtn.addEventListener('click', () => {
@@ -386,7 +510,7 @@ const codeSnippets = [
             }
         });
     
-    // Fix 1: Persist alt text checkbox state
+    // Persist alt text checkbox state
     chrome.storage.local.get('showAltText', function(data) {
         altTextCheckbox.checked = data.showAltText || false;
     });
@@ -439,13 +563,12 @@ async function fetchSnippetsFromGitHub(owner, repo, path) {
     }
 }
 
-// Enhanced refresh functionality
+// Modified refresh functionality
 refreshBtn.addEventListener('click', async () => {
     try {
         refreshBtn.disabled = true;
         refreshBtn.textContent = 'Refreshing...';
         
-        // GitHub repository details
         const owner = 'ness-byte';
         const repo = 'snippy';
         const snippetsPath = 'snippets';
@@ -453,23 +576,30 @@ refreshBtn.addEventListener('click', async () => {
         // Fetch new snippets from GitHub
         const githubSnippets = await fetchSnippetsFromGitHub(owner, repo, snippetsPath);
         
-        // Update the codeSnippets array with new snippets
-        // We'll create a map of existing snippets to avoid duplicates
-        const existingSnippets = new Map(codeSnippets.map(s => [s.title, s]));
-        
-        githubSnippets.forEach(newSnippet => {
-            existingSnippets.set(newSnippet.title, newSnippet);
+        // Add type property to new snippets
+        githubSnippets.forEach(snippet => {
+            snippet.type = 'code'; // Default type for new snippets
         });
         
-        // Convert back to array
-        codeSnippets.length = 0; // Clear existing array
-        codeSnippets.push(...Array.from(existingSnippets.values()));
+        // Create a map of existing snippets to avoid duplicates
+        const existingSnippetsMap = new Map(allSnippets.map(s => [s.snippet, s]));
         
-        // Regenerate buttons and update dropdown
-        await generateButtons();
+        // Add new snippets without duplicates
+        githubSnippets.forEach(newSnippet => {
+            if (!existingSnippetsMap.has(newSnippet.snippet)) {
+                allSnippets.push(newSnippet);
+            }
+        });
+
+        // Cache the updated snippets
+        await chrome.storage.local.set({
+            [CACHE_KEY]: allSnippets,
+            [CACHE_TIMESTAMP_KEY]: Date.now()
+        });
+        
+        // Update dropdown only
         initializeCodeSelect();
         
-        // Show success message
         refreshBtn.textContent = 'Updated!';
         setTimeout(() => {
             refreshBtn.textContent = 'Refresh Files';
@@ -485,6 +615,7 @@ refreshBtn.addEventListener('click', async () => {
         }, 2000);
     }
 });
+
 
     // Fix 2 & 3: Generate both code and icon buttons with proper click handling
     async function createButton(snippet, isIcon = false) {
@@ -538,20 +669,22 @@ refreshBtn.addEventListener('click', async () => {
         codeSection.innerHTML = '';
         iconSection.innerHTML = '';
 
-        // Generate code buttons
-        for (const snippet of codeSnippets) {
-            if (snippet.snippet) {
-                const button = await createButton(snippet);
-                codeSection.appendChild(button);
-            }
-        }
-
-        // Generate icon buttons
-        for (const icon of iconSnippets) {
-            const button = await createButton(icon, true);
-            iconSection.appendChild(button);
+    // Filter and generate code buttons
+    const codeSnippets = allSnippets.filter(snippet => snippet.type === 'code');
+    for (const snippet of codeSnippets) {
+        if (snippet.snippet) {
+            const button = await createButton(snippet);
+            codeSection.appendChild(button);
         }
     }
+
+    // Filter and generate icon buttons
+    const iconSnippets = allSnippets.filter(snippet => snippet.type === 'icon');
+    for (const icon of iconSnippets) {
+        const button = await createButton(icon);
+        iconSection.appendChild(button);
+    }
+}
 
     // Fix 4: Tab navigation
     defaultTab.addEventListener('click', () => {
@@ -581,9 +714,26 @@ refreshBtn.addEventListener('click', async () => {
         });
     }
 
+
+        // Load cached snippets if available
+        const { [CACHE_KEY]: cachedSnippets, [CACHE_TIMESTAMP_KEY]: timestamp } = 
+        await chrome.storage.local.get([CACHE_KEY, CACHE_TIMESTAMP_KEY]);
+    
+    if (cachedSnippets && timestamp) {
+        const now = Date.now();
+        if (now - timestamp < CACHE_DURATION) {
+            // Merge cached snippets with default snippets
+            const existingSnippetsMap = new Map(allSnippets.map(s => [s.snippet, s]));
+            cachedSnippets.forEach(newSnippet => {
+                if (!existingSnippetsMap.has(newSnippet.snippet)) {
+                    allSnippets.push(newSnippet);
+                }
+            });
+        }
+    }
+
     // Initialize everything
     await generateButtons();
     initializeCustomButtons();
     initializeCodeSelect();
 });
-
