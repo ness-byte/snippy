@@ -401,17 +401,90 @@ const codeSnippets = [
         });
     });
 
-    // Helper function to fetch snippet content
-    async function fetchSnippetContent(snippetPath) {
-        try {
-            const response = await fetch(snippetPath);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return await response.text();
-        } catch (error) {
-            console.error('Error fetching snippet:', error);
-            return '';
-        }
+
+// Modified fetchSnippetContent function to handle both local and GitHub URLs
+async function fetchSnippetContent(snippetPath) {
+    try {
+        const response = await fetch(snippetPath);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.text();
+    } catch (error) {
+        console.error('Error fetching snippet:', error);
+        return '';
     }
+}
+
+// GitHub integration
+async function fetchSnippetsFromGitHub(owner, repo, path) {
+    try {
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Filter for HTML files and map to our snippet format
+        return data
+            .filter(file => file.name.endsWith('.html'))
+            .map(file => ({
+                snippet: file.download_url,
+                title: file.name.replace('.html', '').split('-').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' '),
+                iconClass: 'description' // Default icon
+            }));
+    } catch (error) {
+        console.error('Error fetching from GitHub:', error);
+        throw error;
+    }
+}
+
+// Enhanced refresh functionality
+refreshBtn.addEventListener('click', async () => {
+    try {
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = 'Refreshing...';
+        
+        // GitHub repository details
+        const owner = 'ness-byte';
+        const repo = 'snippy';
+        const snippetsPath = 'snippets';
+
+        // Fetch new snippets from GitHub
+        const githubSnippets = await fetchSnippetsFromGitHub(owner, repo, snippetsPath);
+        
+        // Update the codeSnippets array with new snippets
+        // We'll create a map of existing snippets to avoid duplicates
+        const existingSnippets = new Map(codeSnippets.map(s => [s.title, s]));
+        
+        githubSnippets.forEach(newSnippet => {
+            existingSnippets.set(newSnippet.title, newSnippet);
+        });
+        
+        // Convert back to array
+        codeSnippets.length = 0; // Clear existing array
+        codeSnippets.push(...Array.from(existingSnippets.values()));
+        
+        // Regenerate buttons and update dropdown
+        await generateButtons();
+        initializeCodeSelect();
+        
+        // Show success message
+        refreshBtn.textContent = 'Updated!';
+        setTimeout(() => {
+            refreshBtn.textContent = 'Refresh Files';
+            refreshBtn.disabled = false;
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error refreshing snippets:', error);
+        refreshBtn.textContent = 'Error!';
+        setTimeout(() => {
+            refreshBtn.textContent = 'Refresh Files';
+            refreshBtn.disabled = false;
+        }, 2000);
+    }
+});
 
     // Fix 2 & 3: Generate both code and icon buttons with proper click handling
     async function createButton(snippet, isIcon = false) {
