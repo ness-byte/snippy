@@ -8,24 +8,33 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
-    <div id="debug-status" style="position: fixed; top: 0; left: 0; background: yellow; padding: 2px; font-size: 10px;">
+    <!-- <div id="debug-status" style="position: fixed; top: 0; left: 0; background: yellow; padding: 2px; font-size: 10px;">
         Script not loaded
-    </div>
+    </div> -->
     <div id="tabs">
-        <button id="buttons-tab" class="active">Buttons</button>
+        <button id="code-tab" class="active">Code</button>
+        <button id="icons-tab">Icons</button>
         <button id="search-tab">Search</button>
     </div>
 
     <div id="popup">
-        <div id="buttons-view">
-            <div id="snippet-grid"></div>
+        <div id="code-view">
+            <div id="code-grid" class="snippet-grid">
+                <!-- Code snippets will be populated here -->
+            </div>
         </div>
-
+    
+        <div id="icons-view" style="display: none">
+            <div id="icons-grid" class="snippet-grid">
+                <!-- Icons will be populated here -->
+            </div>
+        </div>
+    
         <div id="search-view" style="display: none">
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search snippets...">
             </div>
-            <div id="search-results"></div>
+            <div id="search-results" class="search-results-list"></div>
         </div>
     </div>
 
@@ -36,6 +45,7 @@
         <div class="footer-buttons">
             <button id="reset-custom-btn">Reset Custom</button>
             <button id="refresh-btn">Refresh Files</button>
+            <div id="api-counter" style="font-size: 12px; color: #666;">API Calls: <span id="api-count">0</span></div>
         </div>
     </div>
 
@@ -44,11 +54,6 @@
             <span id="closeModal">&times;</span>
             <h3>Edit Button</h3>
             <div class="modal-body">
-                <label for="icon-select">Choose Icon:</label>
-                <select id="icon-select">
-                    <option value="">Loading icons...</option>
-                </select>
-                
                 <label for="button-label">Button Label:</label>
                 <input type="text" id="button-label" placeholder="Enter button label">
                 
