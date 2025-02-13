@@ -35,7 +35,7 @@
     <img src="icon.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">ACUO design library extension</h3>
+<h3 align="center">ACUO design library extension v2.0</h3>
 
   <p align="center">
     I'm the wiz, nobody beats me!
@@ -78,11 +78,13 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-This is a refresh of Gil's awesome ACUO design library extension tool. With recent changes to icons, code snippets, and the Azure CDN, it was time to revisit this tool and bring it into 2025!
+This is a combination of Gil's original extension tool and Alana's amazing search tool. With recent changes to icons, code snippets, and the Azure CDN, it was time to revisit this tool and bring it into 2025!
 
 This tool will contain the following:
 * Code snippets for design elements within the ACUO design library
 * Icon code snippets
+* (New!) Search functionality
+* (New!) Customise your buttons
 * Alt text visibility toggle
 
 Please note that this is a streamlined version of the original tool, with some of the older features removed. Use [request feature][request-feature] to request a new feature, or [report bug][report-bug] if there's something wrong with the tool.
@@ -95,7 +97,7 @@ Please note that this is a streamlined version of the original tool, with some o
 * HTML – For page structure and content.
 * CSS – For styling and layout.
 * JavaScript – For functionality, including creating dynamic elements and handling interactions.
-* [Material Icons](https://fonts.google.com/icons) – For icon usage.
+<!-- * [Material Icons](https://fonts.google.com/icons) – For icon usage. -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -109,10 +111,13 @@ Please note that this is a streamlined version of the original tool, with some o
 5. To load the new extension, click the <b>Load unpacked</b> button and navigate to the `snippy-main` folder you unzipped earlier.
 6. Finally, head over to your extensions (the little puzzle piece) and then pin the ACUO design library extension wizard to your toolbar. Now it's easily accessible when you need it.
 
-<h3>Hot tip #1: Add a hotkey for the extension</h3>
+<h3>Hot tip #1: Refresh!</h3>
+Use the <b>Refresh files</b> button every now and then to ensure you have the latest version of code snippets.
+
+<h3>Hot tip #2: Add a hotkey for the extension</h3>
 On your extensions page, click the burger menu on the left, then click <b>Keyboard shortcuts</b>. Choose whatever hotkey you like (e.g. ctrl-D), then click <b>Update</b>.
 
-<h3>Hot tip #2: Alt text visibility</h3>
+<h3>Hot tip #3: Alt text visibility</h3>
 Refresh the page after ticking the checkbox to activate alt text visibility.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -120,10 +125,11 @@ Refresh the page after ticking the checkbox to activate alt text visibility.
 <!-- ROADMAP -->
 ## Roadmap
 
+- [X] Integrate search functionality
 - [X] Add readme
     - [ ] Add screenshots to instructions
 - [ ] Add any missing features
-- [ ] Make pretty tooltips
+- [ ] Add custom icon functionality
 
 See the [open issues](https://github.com/ness-byte/snippy/issues) for a full list of proposed features (and known issues).
 
@@ -153,7 +159,7 @@ Distributed under the project_license. See `LICENSE.txt` for more information.
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-With thanks to Gil!
+Alana is the MVP!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

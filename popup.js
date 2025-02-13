@@ -1,4 +1,7 @@
-// Constants and configuration at top level for better performance
+const GITHUB_API_HEADERS = {
+    'Accept': 'application/vnd.github.v3+json'
+};
+
 const STORAGE_KEYS = {
     CACHE: 'snippets_cache',
     TIMESTAMP: 'snippets_timestamp',
@@ -43,9 +46,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         altTextCheckbox: document.getElementById("altTextCheckbox")
     };
 
-    let snippets = [];
-    let currentEditingButton = null;
-    let currentSnippet = null;
     let state = {
         snippets: [],
         currentEditingButton: null,
@@ -107,9 +107,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     elements.altTextCheckbox.addEventListener('change', (e) => {
         const showAltText = e.target.checked;
         chrome.storage.local.set({ showAltText: showAltText });
-        chrome.runtime.sendMessage({ 
-            action: showAltText ? 'showAltText' : 'hideAltText' 
-        });
+/*         chrome.runtime.sendMessage({ 
+            action: showAltText ? 'showAltText' : 'hideAltText'  
+        }); */
     });
 
     // Load alt text preference
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
             if (!query) return;
 
-            const results = snippets.filter(snippet =>
+            const results = state.snippets.filter(snippet =>
                 snippet.title.toLowerCase().includes(query) ||
                 snippet.content.toLowerCase().includes(query)
             );
@@ -290,51 +290,64 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
     
             console.log('Fetching fresh snippets');
-            incrementApiCounter(); // Count the main API call
-            const response = await fetch(
-                `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.snippetsPath}`
-            );
+            const allFiles = await fetchRepositoryContents();
             
-            if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
-    
-            const files = await response.json();
-            const processedSnippets = await Promise.all(
-                files
-                    .filter(file => file.name.endsWith('.html'))
-                    .map(async file => {
-                        incrementApiCounter(); // Count each file content API call
-                        const contentResponse = await fetch(file.download_url);
-                        if (!contentResponse.ok) {
-                            throw new Error(`Failed to fetch content for ${file.name}`);
-                        }
-                        const content = await contentResponse.text();
-                        
-                        const iconUrl = file.name.includes('icon') 
-                            ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/main/${GITHUB_CONFIG.iconsPath}/${file.name.replace('.html', '.svg')}`
-                            : null;
-                        
-                        return {
-                            id: file.name.replace('.html', ''),
-                            title: toSentenceCase(file.name.replace('.html', '')), // Updated to sentence case
-                            content,
-                            isIcon: file.name.includes('icon'),
-                            iconUrl
-                        };
-                    })
+            // Filter relevant files and prepare batch requests
+            const snippetFiles = allFiles.filter(file => 
+                file.path.startsWith(GITHUB_CONFIG.snippetsPath) && 
+                file.path.endsWith('.html')
             );
-
-                    // Cache the results
-        await chrome.storage.local.set({
-            [STORAGE_KEYS.CACHE]: processedSnippets,
-            [STORAGE_KEYS.TIMESTAMP]: Date.now()
-        });
-
-        return processedSnippets;
-    } catch (error) {
-        console.error('Error loading snippets:', error);
-        throw error;
+    
+            // Batch content requests
+            const batchSize = 10;
+            const snippets = [];
+            
+            for (let i = 0; i < snippetFiles.length; i += batchSize) {
+                const batch = snippetFiles.slice(i, i + batchSize);
+                incrementApiCounter();
+                
+                const batchPromises = batch.map(async file => {
+                    const contentResponse = await fetch(file.url, { headers: GITHUB_API_HEADERS });
+                    if (!contentResponse.ok) throw new Error(`Failed to fetch content for ${file.path}`);
+                    
+                    const contentData = await contentResponse.json();
+                    const content = decodeURIComponent(escape(atob(contentData.content)));
+                    
+                    const fileName = file.path.split('/').pop();
+                    const iconUrl = fileName.includes('icon') 
+                        ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/main/${GITHUB_CONFIG.iconsPath}/${fileName.replace('.html', '.svg')}`
+                        : null;
+                    
+                    return {
+                        id: fileName.replace('.html', ''),
+                        title: toSentenceCase(fileName.replace('.html', '')),
+                        content,
+                        isIcon: fileName.includes('icon'),
+                        iconUrl
+                    };
+                });
+                
+                const batchResults = await Promise.all(batchPromises);
+                snippets.push(...batchResults);
+                
+                // Add a small delay between batches to avoid rate limiting
+                if (i + batchSize < snippetFiles.length) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+    
+            // Cache the results
+            await chrome.storage.local.set({
+                [STORAGE_KEYS.CACHE]: snippets,
+                [STORAGE_KEYS.TIMESTAMP]: Date.now()
+            });
+    
+            return snippets;
+        } catch (error) {
+            console.error('Error loading snippets:', error);
+            throw error;
+        }
     }
-}
 
     // Helper function to update icon button appearance
     function updateIconButton(button, snippet, customSettings = null) {
@@ -416,6 +429,33 @@ document.addEventListener("DOMContentLoaded", async function() {
             showNotification('Failed to initialize buttons', 'error');
         }
     }
+
+    async function fetchRepositoryContents() {
+        try {
+            incrementApiCounter();
+            const response = await fetch(
+                `${GITHUB_CONFIG.baseUrl}/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/git/trees/main?recursive=1`,
+                { headers: GITHUB_API_HEADERS }
+            );
+    
+            if (!response.ok) {
+                if (response.status === 403) {
+                    const rateLimitResponse = await fetch('https://api.github.com/rate_limit');
+                    const rateLimit = await rateLimitResponse.json();
+                    const resetTime = new Date(rateLimit.resources.core.reset * 1000);
+                    throw new Error(`Rate limit exceeded. Resets at ${resetTime.toLocaleTimeString()}`);
+                }
+                throw new Error(`GitHub API error: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            return data.tree;
+        } catch (error) {
+            console.error('Error fetching repository contents:', error);
+            throw error;
+        }
+    }
+
     // Refresh button handler
     elements.refreshBtn.addEventListener('click', async () => {
         try {
@@ -426,12 +466,16 @@ document.addEventListener("DOMContentLoaded", async function() {
             await chrome.storage.local.remove([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
             
             snippets = await loadSnippets(true);
-            await initializeButtons(customizations[CUSTOM_SETTINGS_KEY]);
+            await initializeButtons(customizations[STORAGE_KEYS.CUSTOM]);
             
             showNotification('Snippets refreshed successfully!');
         } catch (error) {
             console.error('Refresh error:', error);
-            showNotification('Failed to refresh snippets', 'error');
+            if (error.message.includes('Rate limit exceeded')) {
+                showNotification(error.message, 'error');
+            } else {
+                showNotification('Failed to refresh snippets. Please try again later.', 'error');
+            }
         } finally {
             elements.refreshBtn.disabled = false;
             elements.refreshBtn.classList.remove('loading');

@@ -1,7 +1,6 @@
-/* Set the size of the popup */
 body {
-  width: 400px;  /* Set the width of the popup */
-  height: 580px; /* Set the height of the popup */
+  width: 400px;
+  height: 580px;
   margin: 10px;
   padding: 10px;
   overflow: hidden;
@@ -16,8 +15,8 @@ body {
 #default-view {
   display: flex;
   justify-content: space-evenly;
-  height: calc(100% - 20px); /* Account for body margin/padding */
-  gap: 5px; /* Space between sections */
+  height: calc(100% - 20px);
+  gap: 5px;
 }
 
 #code-view, #icons-view {
@@ -77,13 +76,13 @@ h2 {
   font-size: 12px;
   color: #333;
   box-sizing: border-box;
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   overflow: hidden;
   text-overflow: ellipsis;
-  word-wrap: break-word;
+  word-wrap: normal;
   line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -375,7 +374,6 @@ select {
   background-color: #f5f5f5;
 }
 
-/* Notification styling */
 .notification {
   display: none;
   position: fixed;
@@ -384,7 +382,7 @@ select {
   transform: translateX(-50%);
   padding: 10px 20px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 11px;
   z-index: 1000;
 }
 
