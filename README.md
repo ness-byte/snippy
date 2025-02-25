@@ -1,32 +1,5 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
-<!--
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][license-url]
--->
-
 
 <!-- PROJECT LOGO -->
 <br />
@@ -35,7 +8,7 @@
     <img src="icon.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">ACUO design library extension v2.0</h3>
+<h3 align="center">ACUO design library extension 2.0.1</h3>
 
   <p align="center">
     I'm the wiz, nobody beats me!
@@ -49,20 +22,18 @@
   </p>
 </div>
 
-
-
 <!-- TABLE OF CONTENTS -->
 <details>
-  <summary>Table of Contents</summary>
+  <summary>Table of contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-the-project">About the project</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#built-with">Built with</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#getting-started">Getting started</a>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
@@ -70,8 +41,6 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
-
 
 <!-- ABOUT THE PROJECT -->
 ## About the project
@@ -163,19 +132,7 @@ Alana is the MVP!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/ness-byte/snippy.svg?style=for-the-badge
 [contributors-url]: https://github.com/ness-byte/snippy/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ness-byte/snippy.svg?style=for-the-badge
-[forks-url]: https://github.com/ness-byte/snippy/network/members
-[stars-shield]: https://img.shields.io/github/stars/ness-byte/snippy.svg?style=for-the-badge
-[stars-url]: https://github.com/ness-byte/snippy/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ness-byte/snippy.svg?style=for-the-badge
-[issues-url]: https://github.com/ness-byte/snippy/issues
-[license-shield]: https://img.shields.io/github/license/ness-byte/snippy.svg?style=for-the-badge
 [license-url]: https://github.com/ness-byte/snippy/blob/main/LICENSE.txt
 [download-url]: https://github.com/ness-byte/snippy/archive/refs/heads/main.zip
 [request-feature]: https://github.com/ness-byte/snippy/issues/new?labels=enhancement&template=feature-request---.md

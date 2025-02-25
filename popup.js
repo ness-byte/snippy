@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const currentCount = parseInt(counterElement.textContent) || 0;
         counterElement.textContent = currentCount + 1;
         // Optionally persist the count
-        chrome.storage.local.set({ [STORAGE_KEYS.API_COUNTER]: currentCount + 1 });
+        //chrome.storage.local.set({ [STORAGE_KEYS.API_COUNTER]: currentCount + 1 });
     }
     
     function toSentenceCase(str) {
@@ -199,8 +199,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             if (!query) return;
 
             const results = state.snippets.filter(snippet =>
-                snippet.title.toLowerCase().includes(query) ||
-                snippet.content.toLowerCase().includes(query)
+                snippet.title.toLowerCase().includes(query)
             );
 
             const ul = document.createElement('ul');
@@ -276,81 +275,104 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     });
 
-    // Optimized snippet loading
-    async function loadSnippets(forceRefresh = false) {
-        try {
-            // Check cache first if not forcing refresh
-            if (!forceRefresh) {
-                const cached = await chrome.storage.local.get([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
-                if (cached[STORAGE_KEYS.CACHE] && cached[STORAGE_KEYS.TIMESTAMP] && 
-                    (Date.now() - cached[STORAGE_KEYS.TIMESTAMP] < CACHE_DURATION)) {
-                    console.log('Using cached snippets');
-                    return cached[STORAGE_KEYS.CACHE];
-                }
+// Optimized snippet loading
+async function loadSnippets(forceRefresh = false) {
+    try {
+        // Check cache first if not forcing refresh
+        if (!forceRefresh) {
+            const cached = await chrome.storage.local.get([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
+            if (cached[STORAGE_KEYS.CACHE] && cached[STORAGE_KEYS.TIMESTAMP] && 
+                (Date.now() - cached[STORAGE_KEYS.TIMESTAMP] < CACHE_DURATION)) {
+                console.log('Using cached snippets');
+                return cached[STORAGE_KEYS.CACHE];
             }
-    
-            console.log('Fetching fresh snippets');
-            const allFiles = await fetchRepositoryContents();
-            
-            // Filter relevant files and prepare batch requests
-            const snippetFiles = allFiles.filter(file => 
-                file.path.startsWith(GITHUB_CONFIG.snippetsPath) && 
-                file.path.endsWith('.html')
-            );
-    
-            // Batch content requests
-            const batchSize = 10;
-            const snippets = [];
-            
-            for (let i = 0; i < snippetFiles.length; i += batchSize) {
-                const batch = snippetFiles.slice(i, i + batchSize);
-                incrementApiCounter();
-                
-                const batchPromises = batch.map(async file => {
-                    const contentResponse = await fetch(file.url, { headers: GITHUB_API_HEADERS });
-                    if (!contentResponse.ok) throw new Error(`Failed to fetch content for ${file.path}`);
-                    
-                    const contentData = await contentResponse.json();
-                    const content = decodeURIComponent(escape(atob(contentData.content)));
-                    
-                    const fileName = file.path.split('/').pop();
-                    const iconUrl = fileName.includes('icon') 
-                        ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/main/${GITHUB_CONFIG.iconsPath}/${fileName.replace('.html', '.svg')}`
-                        : null;
-                    
-                    return {
-                        id: fileName.replace('.html', ''),
-                        title: toSentenceCase(fileName.replace('.html', '')),
-                        content,
-                        isIcon: fileName.includes('icon'),
-                        iconUrl
-                    };
-                });
-                
-                const batchResults = await Promise.all(batchPromises);
-                snippets.push(...batchResults);
-                
-                // Add a small delay between batches to avoid rate limiting
-                if (i + batchSize < snippetFiles.length) {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
-            }
-    
-            // Cache the results
-            await chrome.storage.local.set({
-                [STORAGE_KEYS.CACHE]: snippets,
-                [STORAGE_KEYS.TIMESTAMP]: Date.now()
-            });
-    
-            return snippets;
-        } catch (error) {
-            console.error('Error loading snippets:', error);
-            throw error;
         }
+
+        console.log('Fetching fresh snippets');
+        const allFiles = await fetchRepositoryContents();
+        
+        // Filter relevant files and prepare batch requests
+        const snippetFiles = allFiles.filter(file => 
+            file.path.startsWith(GITHUB_CONFIG.snippetsPath) && 
+            file.path.endsWith('.html')
+        );
+
+        // Batch content requests
+        const batchSize = 10;
+        const snippets = [];
+        
+        for (let i = 0; i < snippetFiles.length; i += batchSize) {
+            const batch = snippetFiles.slice(i, i + batchSize);
+            incrementApiCounter();
+            
+            const batchPromises = batch.map(async file => {
+                const contentResponse = await fetch(file.url, { headers: GITHUB_API_HEADERS });
+                if (!contentResponse.ok) throw new Error(`Failed to fetch content for ${file.path}`);
+                
+                const contentData = await contentResponse.json();
+                const content = decodeURIComponent(escape(atob(contentData.content)));
+                
+                const fileName = file.path.split('/').pop();
+                const isIcon = fileName.includes('icon');
+                
+                // Extract icon URL from the HTML content for icon files
+                let iconUrl = null;
+                if (isIcon) {
+                    // Create a temporary DOM element to parse the HTML content
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = content;
+                    
+                    // Try to find an img tag with src attribute
+                    const imgTag = tempDiv.querySelector('img');
+                    if (imgTag && imgTag.src) {
+                        iconUrl = imgTag.src;
+                    } else {
+                        // Fallback: look for a URL pattern in the content
+                        const urlMatch = content.match(/https?:\/\/[^\s"']+\.svg/i);
+                        if (urlMatch) {
+                            iconUrl = urlMatch[0];
+                        } else {
+                            // Last resort: use the GitHub raw URL
+                            iconUrl = `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/main/${GITHUB_CONFIG.iconsPath}/${fileName.replace('.html', '.svg')}`;
+                        } 
+                    }
+                }
+                
+                return {
+                    id: fileName.replace('.html', ''),
+                    title: toSentenceCase(fileName.replace('.html', '')),
+                    content,
+                    isIcon,
+                    iconUrl
+                };
+            });
+            
+            const batchResults = await Promise.all(batchPromises);
+            snippets.push(...batchResults);
+            
+            // Add a small delay between batches to avoid rate limiting
+            if (i + batchSize < snippetFiles.length) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+
+        // Cache the results
+        await chrome.storage.local.set({
+            [STORAGE_KEYS.CACHE]: snippets,
+            [STORAGE_KEYS.TIMESTAMP]: Date.now()
+        });
+
+        return snippets;
+    } catch (error) {
+        console.error('Error loading snippets:', error);
+        throw error;
     }
+}
 
     // Helper function to update icon button appearance
     function updateIconButton(button, snippet, customSettings = null) {
+        button.setAttribute('title', snippet.title);
+        
         if (customSettings?.label !== snippet.title) {
             // Only show label if it's been customized to something different
             button.innerHTML = `<span class="button-label">${customSettings.label}</span>`;
@@ -384,15 +406,15 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Optimized button initialization
     async function initializeButtons() {
         try {
-            elements.codeGrid.innerHTML = '';
-            elements.iconsGrid.innerHTML = '';
-            
             if (!state.snippets.length) {
                 const noSnippetsMessage = '<div class="no-snippets">No snippets available</div>';
                 elements.codeGrid.innerHTML = noSnippetsMessage;
                 elements.iconsGrid.innerHTML = noSnippetsMessage;
                 return;
             }
+
+            elements.codeGrid.innerHTML = '';
+            elements.iconsGrid.innerHTML = '';
             
             const fragment = document.createDocumentFragment();
             const iconFragment = document.createDocumentFragment();
@@ -465,7 +487,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             const customizations = await chrome.storage.local.get(STORAGE_KEYS.CUSTOM);
             await chrome.storage.local.remove([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
             
-            snippets = await loadSnippets(true);
+            state.snippets = await loadSnippets(true);
             await initializeButtons(customizations[STORAGE_KEYS.CUSTOM]);
             
             showNotification('Snippets refreshed successfully!');

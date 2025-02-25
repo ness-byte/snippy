@@ -1,9 +1,9 @@
 {
   "name": "ACUO design library extension rebuild_v2",
-  "version": "2.0",
+  "version": "2.0.1",
   "description": "I'm the wiz, nobody beats me!",
   "manifest_version": 3,
-  "author": "Agnes Au",
+  "author": "Alana Faigen; Agnes Au; Matt Ryan",
   
   "action": {
     "default_popup": "popup.html",
