@@ -1,0 +1,17 @@
+<p>View your Essential and Optional resources by selecting the relevant heading.</p> 
+<div class="combo-reading-well"> 
+    <div> 
+    <h2>Essential readings and resources</h2> 
+    <p>Access your readings through the <span style="color: #e03e2d;">Reading list</span>, and online readings via links provided.</p>
+    <p>The following readings will help you develop a deeper understanding of XXX.</p>
+    <ul>
+        <li>Chapter X: Chapter title (pp. XX–XX) in <em>Book name&nbsp;</em>(Book author, year).</li>
+    </div> 
+    <div> 
+    <h2>Optional readings and resources</h2> 
+    <p>Access your readings through the <span style="color: #e03e2d;">Reading list</span>, and online readings via links provided.</p>
+    <p>The following readings will help you develop a deeper understanding of XXX.</p>
+    <ul>
+        <li>Chapter X: Chapter title (pp. XX–XX) in <em>Book name&nbsp;</em>(Book author, year).</li>
+    </div> 
+</div>
