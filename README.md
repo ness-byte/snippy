@@ -55,6 +55,7 @@ This tool will contain the following:
 * (New!) Search functionality
 * (New!) Customise your buttons
 * Alt text visibility toggle
+* Compatibility with Google Chrome, Microsoft Edge, Brave, and Mozilla Firefox
 
 Please note that this is a streamlined version of the original tool, with some of the older features removed. Use [request feature][request-feature] to request a new feature, or [report bug][report-bug] if there's something wrong with the tool.
 
@@ -97,6 +98,7 @@ Refresh the page after ticking the checkbox to activate alt text visibility.
 - [X] Integrate search functionality
 - [X] Add readme
     - [ ] Add screenshots to instructions
+- [X] Cross-browser compatibility
 - [ ] Add any missing features
 - [ ] Add custom icon functionality
 

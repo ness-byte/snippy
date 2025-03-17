@@ -43,7 +43,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         refreshBtn: document.getElementById("refresh-btn"),
         resetCustomBtn: document.getElementById("reset-custom-btn"),
         notification: document.getElementById("notification"),
-        altTextCheckbox: document.getElementById("altTextCheckbox")
+        altTextCheckbox: document.getElementById("altTextCheckbox"),
+        colorOptions: document.querySelectorAll(".color-option")
     };
 
     let state = {
@@ -52,6 +53,30 @@ document.addEventListener("DOMContentLoaded", async function() {
         currentSnippet: null,
         buttonSettings: {}
     };
+
+    let selectedColor="#000000";
+
+    elements.colorOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove selected class from all options
+            elements.colorOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            option.classList.add('selected');
+            
+            // Store selected color
+            selectedColor = option.dataset.color;
+            
+            // Update reset button state - check if only color is customized
+            if (state.currentSnippet) {
+                elements.resetBtn.disabled = !(
+                    elements.buttonLabel.value !== state.currentSnippet.title || 
+                    elements.snippetCode.value !== state.currentSnippet.content ||
+                    selectedColor !== "#000000"
+                );
+            }
+        });
+    });
 
     function incrementApiCounter() {
         const counterElement = document.getElementById('api-count');
@@ -88,18 +113,25 @@ document.addEventListener("DOMContentLoaded", async function() {
             // Get current settings from state
             const currentSettings = getSnippetSettings(snippet.id) || {
                 label: snippet.title,
-                content: snippet.content
+                content: snippet.content,
+                color: '#000000'
             };
             
             elements.modal.style.display = 'flex';
             elements.snippetCode.readOnly = false;
             elements.buttonLabel.value = currentSettings.label;
             elements.snippetCode.value = currentSettings.content;
+            selectedColor = currentSettings.color || '#000000';
+            
+            elements.colorOptions.forEach(option => {
+                option.classList.toggle('selected', option.dataset.color === selectedColor);
+            });
             
             // Enable reset if customized
             elements.resetBtn.disabled = !(
                 currentSettings.label !== snippet.title || 
-                currentSettings.content !== snippet.content
+                currentSettings.content !== snippet.content ||
+                currentSettings.color !== '#000000'
             );
         }
 
@@ -167,15 +199,22 @@ document.addEventListener("DOMContentLoaded", async function() {
             // Reset modal fields
             elements.buttonLabel.value = state.currentSnippet.title;
             elements.snippetCode.value = state.currentSnippet.content;
+            selectedColor = '#000000';
+            elements.colorOptions.forEach(option => {
+                option.classList.toggle('selected', option.dataset.color === selectedColor);
+            });
             
             // Reset button appearance
             if (state.currentSnippet.isIcon) {
                 updateIconButton(state.currentEditingButton, state.currentSnippet, {
                     label: state.currentSnippet.title,
-                    content: state.currentSnippet.content
+                    content: state.currentSnippet.content,
+                    color: '#000000'
                 });
             } else {
                 state.currentEditingButton.textContent = state.currentSnippet.title;
+                state.currentEditingButton.style.borderColor = '';
+                state.currentEditingButton.style.borderWidth = '1px';
             }
             
             state.currentEditingButton.onclick = () => copySnippet(state.currentSnippet.content);
@@ -232,12 +271,14 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (!snippet) return;
 
         if (newSettings.label === snippet.title && 
-            newSettings.content === snippet.content) {
+            newSettings.content === snippet.content &&
+            newSettings.color === '#000000') {
             delete state.buttonSettings[snippetId];
         } else {
             state.buttonSettings[snippetId] = newSettings;
         }
 
+        console.log('Saving button settings:', snippetId, newSettings);
         // Update storage
         await chrome.storage.local.set({ 
             [STORAGE_KEYS.CUSTOM]: state.buttonSettings 
@@ -253,7 +294,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         try {
             const newSettings = {
                 label: elements.buttonLabel.value.trim(),
-                content: elements.snippetCode.value
+                content: elements.snippetCode.value,
+                color: selectedColor
             };
 
             await saveButtonCustomization(state.currentSnippet.id, newSettings);
@@ -263,6 +305,15 @@ document.addEventListener("DOMContentLoaded", async function() {
                 updateIconButton(state.currentEditingButton, state.currentSnippet, newSettings);
             } else {
                 state.currentEditingButton.textContent = newSettings.label;
+                
+                // Apply custom border color and width
+                if (newSettings.color !== '#000000') {
+                    state.currentEditingButton.style.borderColor = newSettings.color;
+                    state.currentEditingButton.style.borderWidth = '2px'; // Thicker border
+                } else {
+                    state.currentEditingButton.style.borderColor = '';
+                    state.currentEditingButton.style.borderWidth = '1px'; // Default width
+                }
             }
             
             state.currentEditingButton.onclick = () => copySnippet(newSettings.content);
@@ -318,23 +369,26 @@ async function loadSnippets(forceRefresh = false) {
                 // Extract icon URL from the HTML content for icon files
                 let iconUrl = null;
                 if (isIcon) {
-                    // Create a temporary DOM element to parse the HTML content
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = content;
+                    // Use DOMParser instead of creating a temporary element with innerHTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(content, 'text/html');
                     
                     // Try to find an img tag with src attribute
-                    const imgTag = tempDiv.querySelector('img');
-                    if (imgTag && imgTag.src) {
-                        iconUrl = imgTag.src;
+                    const imgTag = doc.querySelector('img');
+                    if (imgTag && imgTag.getAttribute('src')) {
+                        // Validate the URL before using it
+                        const rawUrl = imgTag.getAttribute('src');
+                        iconUrl = validateAndSanitizeUrl(rawUrl);
                     } else {
                         // Fallback: look for a URL pattern in the content
                         const urlMatch = content.match(/https?:\/\/[^\s"']+\.svg/i);
                         if (urlMatch) {
-                            iconUrl = urlMatch[0];
+                            iconUrl = validateAndSanitizeUrl(urlMatch[0]);
                         } else {
                             // Last resort: use the GitHub raw URL
-                            iconUrl = `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/main/${GITHUB_CONFIG.iconsPath}/${fileName.replace('.html', '.svg')}`;
-                        } 
+                            const defaultUrl = `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/main/${GITHUB_CONFIG.iconsPath}/${fileName.replace('.html', '.svg')}`;
+                            iconUrl = validateAndSanitizeUrl(defaultUrl);
+                        }
                     }
                 }
                 
@@ -372,13 +426,63 @@ async function loadSnippets(forceRefresh = false) {
     // Helper function to update icon button appearance
     function updateIconButton(button, snippet, customSettings = null) {
         button.setAttribute('title', snippet.title);
+
+        if (customSettings?.color && customSettings.color !== '#000000') {
+            button.style.borderColor = customSettings.color;
+            button.style.borderWidth = '2px';
+        } else {
+            button.style.borderColor = ''; // Reset to default
+            button.style.borderWidth = '1px';
+        }
+        
+        // Clear any existing content
+        while (button.firstChild) {
+            button.removeChild(button.firstChild);
+        }
         
         if (customSettings?.label !== snippet.title) {
             // Only show label if it's been customized to something different
-            button.innerHTML = `<span class="button-label">${customSettings.label}</span>`;
+            const span = document.createElement('span');
+            span.className = 'button-label';
+            span.textContent = customSettings.label;
+            button.appendChild(span);
         } else {
             // Show icon by default or if label matches original title
-            button.innerHTML = `<img src="${snippet.iconUrl}" alt="${snippet.title}" class="button-icon">`;
+            const img = document.createElement('img');
+            // Validate URL before using it for display
+            img.src = validateAndSanitizeUrl(snippet.iconUrl) || 'default-icon.svg';
+            img.alt = snippet.title;
+            img.className = 'button-icon';
+            button.appendChild(img);
+        }
+    }
+
+    // Add a URL validation helper
+    function validateAndSanitizeUrl(url) {
+        if (!url) return '';
+        
+        try {
+            const parsedUrl = new URL(url);
+            // Only log warnings during fetch, but don't block
+            const allowedDomains = [
+                'raw.githubusercontent.com',
+                'github.com',
+                'githubusercontent.com',
+                'cei-dlc.test.acucontenthub.acu.edu.au',
+                'cei-dlc.acucontenthub.acu.edu.au',
+                // Add other trusted domains here
+            ];
+            
+            if (parsedUrl.protocol !== 'https:' || 
+                !allowedDomains.some(domain => parsedUrl.hostname === domain || 
+                                            parsedUrl.hostname.endsWith('.' + domain))) {
+                console.warn('Potentially unsafe URL:', url);
+                // Still return the URL but log a warning
+            }
+            return url;
+        } catch (e) {
+            console.error('Invalid URL:', url, e);
+            return '';
         }
     }
 
@@ -407,12 +511,22 @@ async function loadSnippets(forceRefresh = false) {
     async function initializeButtons() {
         try {
             if (!state.snippets.length) {
-                const noSnippetsMessage = '<div class="no-snippets">No snippets available</div>';
-                elements.codeGrid.innerHTML = noSnippetsMessage;
-                elements.iconsGrid.innerHTML = noSnippetsMessage;
+                // Create DOM elements instead of setting innerHTML directly
+                const noSnippetsDiv = document.createElement('div');
+                noSnippetsDiv.className = 'no-snippets';
+                noSnippetsDiv.textContent = 'No snippets available';
+                
+                // Clear existing content
+                elements.codeGrid.innerHTML = '';
+                elements.iconsGrid.innerHTML = '';
+                
+                // Append the new elements
+                elements.codeGrid.appendChild(noSnippetsDiv.cloneNode(true));
+                elements.iconsGrid.appendChild(noSnippetsDiv.cloneNode(true));
                 return;
             }
-
+    
+            // Clear existing content
             elements.codeGrid.innerHTML = '';
             elements.iconsGrid.innerHTML = '';
             
@@ -426,17 +540,29 @@ async function loadSnippets(forceRefresh = false) {
                 
                 const customSettings = getSnippetSettings(snippet.id) || {
                     label: snippet.title,
-                    content: snippet.content
+                    content: snippet.content,
+                    color: '#000000'
                 };
+            
+                if (customSettings.color && customSettings.color !== '#000000') {
+                    button.style.borderColor = customSettings.color;
+                    button.style.borderWidth = '2px';
+                } else {
+                    button.style.borderWidth = '1px';
+                }
+
                 
                 if (snippet.isIcon) {
+                    // Use the safer updateIconButton function
                     updateIconButton(button, snippet, customSettings);
                     iconFragment.appendChild(button);
                 } else {
+                    // Use textContent instead of setting innerHTML
                     button.textContent = customSettings.label;
                     fragment.appendChild(button);
                 }
                 
+                // Set event handlers
                 button.onclick = () => copySnippet(customSettings.content);
                 button.oncontextmenu = (e) => {
                     e.preventDefault();
@@ -447,8 +573,8 @@ async function loadSnippets(forceRefresh = false) {
             elements.codeGrid.appendChild(fragment);
             elements.iconsGrid.appendChild(iconFragment);
         } catch (error) {
-            console.error('Initialize buttons error:', error);
-            showNotification('Failed to initialize buttons', 'error');
+            console.error('Initialise buttons error:', error);
+            showNotification('Failed to initialise buttons', 'error');
         }
     }
 
@@ -521,7 +647,7 @@ async function loadSnippets(forceRefresh = false) {
             ]);
         } catch (error) {
             console.error('Initialization error:', error);
-            showNotification('Failed to initialize extension', 'error');
+            showNotification('Failed to initialise extension', 'error');
         }
     }
 

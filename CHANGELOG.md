@@ -8,7 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Customise button icon functionality
+## [2.0.3] - 2025-03-17
+
+### Added
+
+- Customise button border colours
+
+### Changed
+
+- Code snippet area no longer resizeable (broke the modal)
+
+## [2.0.2] - 2025-02-28
+
+### Added
+
+- Compatibility across Google Chrome, Microsoft Edge, Brave, and Mozilla Firefox
 
 ## [2.0.1] - 2025-02-25
 

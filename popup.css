@@ -91,13 +91,13 @@ h2 {
 }
 
 /* Hover state */
-.code-button:hover, .icon-button:hover, .custom-button:hover {
+.code-button:hover, .icon-button:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
   transform: translateY(-2px); /* Lift button slightly on hover */
 }
 
 /* Active (click) state */
-.code-button:active, .icon-button:active, .custom-button:active {
+.code-button:active, .icon-button:active {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow when clicked */
   transform: translateY(2px); /* Slightly move the button down */
 }
@@ -135,7 +135,7 @@ h2 {
   line-height: 1.4;
   border: 1px solid #ccc;
   border-radius: 4px;
-  resize: vertical; /* Allows vertical resizing */
+  resize: none; /* vertical; /* Allows vertical resizing */
 }
 
 .modal {
@@ -169,6 +169,12 @@ h2 {
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+#button-color {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
 }
 
 /* Add labels styling */
@@ -224,38 +230,6 @@ select {
 #tabs button.active {
   background: #fff;
   border-bottom: none;
-}
-
-/* Custom button grid */
-#custom-section {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  padding: 10px;
-}
-
-.custom-button {
-  width: 60px;
-  height: 60px;
-  border: 1px solid #ccc;
-  background: #fff;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 11px;
-  padding: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-wrap: break-word;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  transition: all 0.3s ease; 
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  word-wrap: break-word;
 }
 
 /* Footer styling */
@@ -399,7 +373,7 @@ select {
 
 #refresh-btn {
   position: relative;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
 }
 
 #refresh-btn:disabled {
@@ -469,4 +443,37 @@ select {
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-left: 5px;
+}
+
+.color-selector {
+  margin: 10px 0;
+}
+
+.color-selector span {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.color-option {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border: 2px solid #333;
+  transform: scale(1.1);
 }
