@@ -74,23 +74,34 @@ Please note that this is a streamlined version of the original tool, with some o
 <!-- GETTING STARTED -->
 ## Getting started
 
-1. For Chrome and Edge, download the [latest version][download-url] of the tool and unzip it, making sure to remove previous old versions if you have any. Inside the unzipped folder will be a folder called `snippy-main`.
+<h3>Chrome and Edge</h3>
+
+1. Download the [latest version][download-url] of the tool and unzip it, making sure to remove previous old versions if you have any. Inside the unzipped folder will be a folder called `snippy-main`.
 2. Go to the Extensions page by clicking the three dots (top right) in the browser, then <b>More tools</b>, then <b>Extensions</b>.
 3. Make sure <b>Developer mode</b> is activated using the toggle in the top right.
 4. Remove the old version of the ACUO design library extension by clicking the <b>Remove</b> button.
 5. To load the new extension, click the <b>Load unpacked</b> button and navigate to the `snippy-main` folder you unzipped earlier.
-6. Finally, head over to your extensions (the little puzzle piece) and then pin the ACUO design library extension wizard to your toolbar. Now it's easily accessible when you need it.
+6. Finally, head over to your extensions (the little puzzle icon) and then pin the ACUO design library extension wizard to your toolbar. Now it's easily accessible when you need it.
 
-Note: <b>Firefox users</b>, please download and install the latest .zip from <a href="https://github.com/ness-byte/snippy/tree/main/web-ext-artifacts">this folder</a>.
+<h3>Firefox</h3>
+
+1. Download the latest .zip file from <a href="https://github.com/ness-byte/snippy/tree/main/web-ext-artifacts">this folder</a>. There is no need to unzip it.
+2. Go to the Extensions page by clicking the puzzle icon in the toolbar and then selecting 'Extensions' from the left menu.
+3. In 'Manage Your Extensions', click on the settings icon and select 'Install Add-on From File...'
+4. Navigate to the .zip file you downloaded in step 1 and click open.
+5. Right-click on the wizard icon in the toolbar to pin the extension to the toolbar.
 
 <h3>Hot tip #1: Refresh!</h3>
-Use the <b>Refresh files</b> button every now and then to ensure you have the latest version of code snippets.
+Use the <b>Refresh files</b> button every now and then to ensure you have the latest version of code snippets (but don't hit this button more than once an hour).
 
 <h3>Hot tip #2: Add a hotkey for the extension</h3>
 On your extensions page, click the burger menu on the left, then click <b>Keyboard shortcuts</b>. Choose whatever hotkey you like (e.g. ctrl-D), then click <b>Update</b>.
 
 <h3>Hot tip #3: Alt text visibility</h3>
 Refresh the page after ticking the checkbox to activate alt text visibility.
+
+<h3>Hot tip #4: Failed to initialise extension</h3>
+If you get a 'failed to initialise extension' error, wait a little while before trying again.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
