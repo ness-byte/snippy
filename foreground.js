@@ -39,19 +39,39 @@ function hideAltText() {
 }
 
 // Listen for the message to toggle visibility of alt text
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'showAltText') {
       showAltText();
+      // For Chrome compatibility
+      if (sendResponse) sendResponse({status: "completed"});
+      // For Firefox compatibility
+      return Promise.resolve({status: "completed"});
   } else if (request.action === 'hideAltText') {
       hideAltText();
+      // For Chrome compatibility
+      if (sendResponse) sendResponse({status: "completed"});
+      // For Firefox compatibility
+      return Promise.resolve({status: "completed"});
   }
 });
 
 // Check and apply the visibility of alt text on page load or refresh
-chrome.storage.local.get('showAltText', function (data) {
-  if (data.showAltText) {
-    showAltText();
-  } else {
-    hideAltText();
-  }
-});
+try {
+  // Promise-based approach for Firefox
+  browserAPI.storage.local.get('showAltText').then(data => {
+    if (data.showAltText) {
+      showAltText();
+    } else {
+      hideAltText();
+    }
+  });
+} catch (e) {
+  // Callback-based approach for Chrome
+  browserAPI.storage.local.get('showAltText', function (data) {
+    if (data.showAltText) {
+      showAltText();
+    } else {
+      hideAltText();
+    }
+  });
+}

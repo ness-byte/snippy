@@ -8,7 +8,7 @@
     <img src="icon.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">ACUO design library extension 2.0.1</h3>
+<h3 align="center">ACUO design library extension 2.1.0</h3>
 
   <p align="center">
     I'm the wiz, nobody beats me!
@@ -100,8 +100,11 @@ Refresh the page after ticking the checkbox to activate alt text visibility.
     - [ ] Add screenshots to instructions
 - [X] Cross-browser compatibility
 - [ ] Add any missing features
-- [ ] Add custom icon functionality
-
+- [X] Add button customisation functionality
+    - [X] Custom button labels
+    - [X] Editable code snippets
+    - [X] Coloured button borders
+    
 See the [open issues](https://github.com/ness-byte/snippy/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

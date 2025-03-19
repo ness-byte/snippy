@@ -6,17 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Added
-
-## [2.0.3] - 2025-03-17
+- Alt text only in Canvas pages
 
 ### Added
 
-- Customise button border colours
+## [2.1.0] - 2025-03-19
+
+### Added
+
+- Ability to customise button border colours
 
 ### Changed
 
 - Code snippet area no longer resizeable (broke the modal)
+
+### Fixed
+
+- Cross-browser compatibility fixed (browser-detect.js)
 
 ## [2.0.2] - 2025-02-28
 

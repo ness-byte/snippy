@@ -1,3 +1,5 @@
+const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+
 const GITHUB_API_HEADERS = {
     'Accept': 'application/vnd.github.v3+json'
 };
@@ -83,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const currentCount = parseInt(counterElement.textContent) || 0;
         counterElement.textContent = currentCount + 1;
         // Optionally persist the count
-        //chrome.storage.local.set({ [STORAGE_KEYS.API_COUNTER]: currentCount + 1 });
+        //browserAPI.storage.local.set({ [STORAGE_KEYS.API_COUNTER]: currentCount + 1 });
     }
     
     function toSentenceCase(str) {
@@ -95,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
         // Load and cache button settings
         async function loadButtonSettings() {
-            const result = await chrome.storage.local.get(STORAGE_KEYS.CUSTOM);
+            const result = await browserAPI.storage.local.get(STORAGE_KEYS.CUSTOM);
             state.buttonSettings = result[STORAGE_KEYS.CUSTOM] || {};
             return state.buttonSettings;
         }
@@ -138,15 +140,15 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Initialize alt text checkbox
     elements.altTextCheckbox.addEventListener('change', (e) => {
         const showAltText = e.target.checked;
-        chrome.storage.local.set({ showAltText: showAltText });
-/*         chrome.runtime.sendMessage({ 
+        browserAPI.storage.local.set({ showAltText: showAltText });
+/*         browserAPI.runtime.sendMessage({ 
             action: showAltText ? 'showAltText' : 'hideAltText'  
         }); */
     });
 
     // Load alt text preference
     async function loadAltTextPreference() {
-        const result = await chrome.storage.local.get('showAltText');
+        const result = await browserAPI.storage.local.get('showAltText');
         elements.altTextCheckbox.checked = result.showAltText || false;
     }
 
@@ -176,7 +178,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     elements.resetCustomBtn.addEventListener('click', async () => {
         try {
             state.buttonSettings = {};
-            await chrome.storage.local.remove(STORAGE_KEYS.CUSTOM);
+            await browserAPI.storage.local.remove(STORAGE_KEYS.CUSTOM);
             await initializeButtons();
             showNotification('All buttons reset to default');
         } catch (error) {
@@ -192,7 +194,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         try {
             // Remove customization
             delete state.buttonSettings[state.currentSnippet.id];
-            await chrome.storage.local.set({ 
+            await browserAPI.storage.local.set({ 
                 [STORAGE_KEYS.CUSTOM]: state.buttonSettings 
             });
             
@@ -280,7 +282,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         console.log('Saving button settings:', snippetId, newSettings);
         // Update storage
-        await chrome.storage.local.set({ 
+        await browserAPI.storage.local.set({ 
             [STORAGE_KEYS.CUSTOM]: state.buttonSettings 
         });
 
@@ -331,7 +333,7 @@ async function loadSnippets(forceRefresh = false) {
     try {
         // Check cache first if not forcing refresh
         if (!forceRefresh) {
-            const cached = await chrome.storage.local.get([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
+            const cached = await browserAPI.storage.local.get([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
             if (cached[STORAGE_KEYS.CACHE] && cached[STORAGE_KEYS.TIMESTAMP] && 
                 (Date.now() - cached[STORAGE_KEYS.TIMESTAMP] < CACHE_DURATION)) {
                 console.log('Using cached snippets');
@@ -411,7 +413,7 @@ async function loadSnippets(forceRefresh = false) {
         }
 
         // Cache the results
-        await chrome.storage.local.set({
+        await browserAPI.storage.local.set({
             [STORAGE_KEYS.CACHE]: snippets,
             [STORAGE_KEYS.TIMESTAMP]: Date.now()
         });
@@ -610,8 +612,8 @@ async function loadSnippets(forceRefresh = false) {
             elements.refreshBtn.disabled = true;
             elements.refreshBtn.classList.add('loading');
             
-            const customizations = await chrome.storage.local.get(STORAGE_KEYS.CUSTOM);
-            await chrome.storage.local.remove([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
+            const customizations = await browserAPI.storage.local.get(STORAGE_KEYS.CUSTOM);
+            await browserAPI.storage.local.remove([STORAGE_KEYS.CACHE, STORAGE_KEYS.TIMESTAMP]);
             
             state.snippets = await loadSnippets(true);
             await initializeButtons(customizations[STORAGE_KEYS.CUSTOM]);
@@ -634,7 +636,7 @@ async function loadSnippets(forceRefresh = false) {
     async function initialize() {
         try {
             // Load saved API counter
-            const counter = await chrome.storage.local.get(STORAGE_KEYS.API_COUNTER);
+            const counter = await browserAPI.storage.local.get(STORAGE_KEYS.API_COUNTER);
             document.getElementById('api-count').textContent = counter[STORAGE_KEYS.API_COUNTER] || 0;
             
             await Promise.all([
