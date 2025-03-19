@@ -74,12 +74,14 @@ Please note that this is a streamlined version of the original tool, with some o
 <!-- GETTING STARTED -->
 ## Getting started
 
-1. Download the [latest version][download-url] of the tool and unzip it, making sure to remove previous old versions if you have any. Inside the unzipped folder will be a folder called `snippy-main`.
-2. Go to the Chrome Extensions page by clicking the three dots (top right) in Chrome, then <b>More tools</b>, then <b>Extensions</b>.
+1. For Chrome and Edge, download the [latest version][download-url] of the tool and unzip it, making sure to remove previous old versions if you have any. Inside the unzipped folder will be a folder called `snippy-main`.
+2. Go to the Extensions page by clicking the three dots (top right) in the browser, then <b>More tools</b>, then <b>Extensions</b>.
 3. Make sure <b>Developer mode</b> is activated using the toggle in the top right.
 4. Remove the old version of the ACUO design library extension by clicking the <b>Remove</b> button.
 5. To load the new extension, click the <b>Load unpacked</b> button and navigate to the `snippy-main` folder you unzipped earlier.
 6. Finally, head over to your extensions (the little puzzle piece) and then pin the ACUO design library extension wizard to your toolbar. Now it's easily accessible when you need it.
+
+Note: <b>Firefox users</b>, please download and install the latest .zip from <a href="https://github.com/ness-byte/snippy/tree/main/web-ext-artifacts">this folder</a>.
 
 <h3>Hot tip #1: Refresh!</h3>
 Use the <b>Refresh files</b> button every now and then to ensure you have the latest version of code snippets.
