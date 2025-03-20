@@ -47,7 +47,7 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-This is a combination of Gil's original extension tool and Alana's amazing search tool. With recent changes to icons, code snippets, and the Azure CDN, it was time to revisit this tool and bring it into 2025!
+This is a combination of Agnes' wizardry in development work, Gil's original extension tool and Alana's amazing search tool. With recent changes to icons, code snippets, and the Azure CDN, it was time to revisit this tool and bring it into 2025!
 
 This tool will contain the following:
 * Code snippets for design elements within the ACUO design library
@@ -140,13 +140,6 @@ Distributed under the project_license. See `LICENSE.txt` for more information.
 * Project link: [https://github.com/ness-byte/snippy](https://github.com/ness-byte/snippy)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-Alana is the MVP!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
