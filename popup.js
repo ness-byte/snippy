@@ -1,9 +1,16 @@
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 
-const GITHUB_API_HEADERS = {
+const CONFIG = window.CONFIG || {};
+
+const API_HEADERS = {
     'Accept': 'application/vnd.github.v3+json',
-    'Authorization': 'token GITHUB_TOKEN'
-};
+}
+
+function getRequestHeaders() {
+    return window.API_AUTH ?
+    {...API_HEADERS, ...window.API_AUTH} :
+    API_HEADERS;
+    };
 
 const STORAGE_KEYS = {
     CACHE: 'snippets_cache',
@@ -360,7 +367,7 @@ async function loadSnippets(forceRefresh = false) {
             incrementApiCounter();
             
             const batchPromises = batch.map(async file => {
-                const contentResponse = await fetch(file.url, { headers: GITHUB_API_HEADERS });
+                const contentResponse = await fetch(file.url, { headers: getRequestHeaders() });
                 if (!contentResponse.ok) throw new Error(`Failed to fetch content for ${file.path}`);
                 
                 const contentData = await contentResponse.json();
@@ -586,7 +593,7 @@ async function loadSnippets(forceRefresh = false) {
             incrementApiCounter();
             const response = await fetch(
                 `${GITHUB_CONFIG.baseUrl}/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/git/trees/main?recursive=1`,
-                { headers: GITHUB_API_HEADERS }
+                { headers: getRequestHeaders() }
             );
     
             if (!response.ok) {
