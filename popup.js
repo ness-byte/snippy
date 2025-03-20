@@ -1,7 +1,8 @@
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 
 const GITHUB_API_HEADERS = {
-    'Accept': 'application/vnd.github.v3+json'
+    'Accept': 'application/vnd.github.v3+json',
+    'Authorization': 'token GITHUB_TOKEN'
 };
 
 const STORAGE_KEYS = {
