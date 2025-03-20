@@ -141,8 +141,6 @@ Distributed under the project_license. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 [contributors-url]: https://github.com/ness-byte/snippy/graphs/contributors
 [license-url]: https://github.com/ness-byte/snippy/blob/main/LICENSE.txt
 [download-url]: https://github.com/ness-byte/snippy/archive/refs/heads/main.zip
