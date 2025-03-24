@@ -6,15 +6,17 @@
     <title>Code Snippet Extension</title>
     <link rel="stylesheet" href="popup.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="config.js"></script>
     <script src="browser-detect.js"></script>
+    <script src="popup.js"></script>
 </head>
 <body>
     <!-- <div id="debug-status" style="position: fixed; top: 0; left: 0; background: yellow; padding: 2px; font-size: 10px;">
         Script not loaded
     </div> -->
     <div id="tabs">
-        <button id="code-tab" class="active">Code</button>
-        <button id="icons-tab">Icons</button>
+        <button id="code-tab" class="active">Snippets</button>
+        <button id="icons-tab">Box icons</button>
         <button id="search-tab">Search</button>
     </div>
 
@@ -80,8 +82,6 @@
             </div>
         </div>
     </div>
-
     <div id="notification" class="notification"></div>
-    <script src="popup.js"></script>
 </body>
 </html>

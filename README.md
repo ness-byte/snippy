@@ -8,7 +8,7 @@
     <img src="icon.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">ACUO design library extension 2.1.0</h3>
+<h3 align="center">ACUO design library extension 2.2.0</h3>
 
   <p align="center">
     I'm the wiz, nobody beats me!

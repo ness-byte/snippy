@@ -1,7 +1,5 @@
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 
-const CONFIG = window.CONFIG || {};
-
 const API_HEADERS = {
     'Accept': 'application/vnd.github.v3+json',
 }
@@ -11,6 +9,13 @@ function getRequestHeaders() {
     {...API_HEADERS, ...window.API_AUTH} :
     API_HEADERS;
     };
+
+function logAuthStatus() {
+    const authHeaders = getRequestHeaders();
+    const hasAuth = window.API_AUTH && Object.keys(window.API_AUTH).length > 0;
+    console.log(`Authentication status: ${hasAuth ? 'Using private token' : 'No token found'}`);
+    return hasAuth;
+}
 
 const STORAGE_KEYS = {
     CACHE: 'snippets_cache',
@@ -336,6 +341,40 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     });
 
+    async function checkRateLimits() {
+        try {
+            console.log('Checking GitHub API rate limits...');
+            incrementApiCounter();
+            
+            const response = await fetch('https://api.github.com/rate_limit', { 
+                headers: getRequestHeaders() 
+            });
+            
+            if (!response.ok) {
+                console.error('Failed to check rate limits:', response.status);
+                return null;
+            }
+            
+            const data = await response.json();
+            console.log('Rate limit data:', data);
+            console.log(`Core limits: ${data.resources.core.used}/${data.resources.core.limit} (Remaining: ${data.resources.core.remaining})`);
+            console.log(`Reset time: ${new Date(data.resources.core.reset * 1000).toLocaleTimeString()}`);
+            
+            // If using authenticated requests, we should see higher limits
+            if (data.resources.core.limit > 60) {
+                console.log('✅ Authenticated rate limits detected (>60 requests/hour)');
+            } else {
+                console.log('⚠️ Using unauthenticated rate limits (60 requests/hour)');
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Error checking rate limits:', error);
+            return null;
+        }
+    }
+
+
 // Optimized snippet loading
 async function loadSnippets(forceRefresh = false) {
     try {
@@ -588,32 +627,35 @@ async function loadSnippets(forceRefresh = false) {
         }
     }
 
+    // Update fetchRepositoryContents to include auth logging
     async function fetchRepositoryContents() {
         try {
+            console.log('Fetching repository contents...');
+            const isAuthenticated = logAuthStatus();
             incrementApiCounter();
-            const response = await fetch(
-                `${GITHUB_CONFIG.baseUrl}/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/git/trees/main?recursive=1`,
-                { headers: getRequestHeaders() }
-            );
-    
+            
+            const url = `${GITHUB_CONFIG.baseUrl}/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/git/trees/main?recursive=1`;
+            console.log(`Making request to: ${url}`);
+            
+            const response = await fetch(url, { headers: getRequestHeaders() });
+            
             if (!response.ok) {
                 if (response.status === 403) {
-                    const rateLimitResponse = await fetch('https://api.github.com/rate_limit');
-                    const rateLimit = await rateLimitResponse.json();
-                    const resetTime = new Date(rateLimit.resources.core.reset * 1000);
-                    throw new Error(`Rate limit exceeded. Resets at ${resetTime.toLocaleTimeString()}`);
+                    // Check if it's a rate limit issue
+                    await checkRateLimits();
+                    throw new Error(`Rate limit exceeded. Authentication status: ${isAuthenticated ? 'Token present' : 'No token'}`);
                 }
                 throw new Error(`GitHub API error: ${response.status}`);
             }
-    
+            
             const data = await response.json();
+            console.log(`Repository contents fetched successfully. Items: ${data.tree.length}`);
             return data.tree;
         } catch (error) {
             console.error('Error fetching repository contents:', error);
             throw error;
         }
     }
-
     // Refresh button handler
     elements.refreshBtn.addEventListener('click', async () => {
         try {
@@ -641,25 +683,47 @@ async function loadSnippets(forceRefresh = false) {
     });
 
     // Initialize
-    async function initialize() {
-        try {
-            // Load saved API counter
-            const counter = await browserAPI.storage.local.get(STORAGE_KEYS.API_COUNTER);
-            document.getElementById('api-count').textContent = counter[STORAGE_KEYS.API_COUNTER] || 0;
-            
-            await Promise.all([
-                loadAltTextPreference(),
-                loadButtonSettings(),
-                (async () => {
-                    state.snippets = await loadSnippets();
-                    await initializeButtons();
-                })()
-            ]);
-        } catch (error) {
-            console.error('Initialization error:', error);
-            showNotification('Failed to initialise extension', 'error');
-        }
+// Update the initialize function
+async function initialize() {
+    try {
+        // Load saved API counter
+        const counter = await browserAPI.storage.local.get(STORAGE_KEYS.API_COUNTER);
+        document.getElementById('api-count').textContent = counter[STORAGE_KEYS.API_COUNTER] || 0;
+        
+        // Check authentication status
+        const isAuthenticated = logAuthStatus();
+        console.log(`Extension initialised with auth: ${isAuthenticated}`);
+        
+        // Check rate limits
+        const rateLimits = await checkRateLimits();
+        
+        // Log config for debugging (without exposing token content)
+        console.log('API_AUTH configured:', !!window.API_AUTH);
+                
+        // Add visual indicator of auth status to footer
+        /* const footerDiv = document.querySelector('.footer-buttons');
+        const authStatusIndicator = document.createElement('div');
+        authStatusIndicator.id = 'auth-status';
+        authStatusIndicator.style.fontSize = '12px';
+        authStatusIndicator.style.marginLeft = '5px';
+        authStatusIndicator.innerHTML = isAuthenticated ? 
+            '<span style="color: #28a745;">●</span> Auth OK' : 
+            '<span style="color: #ed0c00;">●</span> No Auth';
+        footerDiv.appendChild(authStatusIndicator); */
+
+        await Promise.all([
+            loadAltTextPreference(),
+            loadButtonSettings(),
+            (async () => {
+                state.snippets = await loadSnippets();
+                await initializeButtons();
+            })()
+        ]);
+    } catch (error) {
+        console.error('Initialization error:', error);
+        showNotification('Failed to initialise extension', 'error');
     }
+}
 
     initialize();
 });

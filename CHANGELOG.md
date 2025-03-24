@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Alt text only in Canvas pages
 
+### [2.2.0] - 2025-3-25
+
+### Fixed
+
+- Rate limit fix using access token (5000 requests/hour across all users)
+
 ### Added
 
 ## [2.1.0] - 2025-03-19
