@@ -85,7 +85,7 @@ Please note that this is a streamlined version of the original tool, with some o
 
 <h3>Firefox</h3>
 
-1. Download the latest .zip file from <a href="https://github.com/ness-byte/snippy/tree/main/web-ext-artifacts">this folder</a>. There is no need to unzip it.
+1. Download the latest .zip file from our SharePoint. There is no need to unzip it.
 2. Go to the Extensions page by clicking the puzzle icon in the toolbar and then selecting 'Extensions' from the left menu.
 3. In 'Manage Your Extensions', click on the settings icon and select 'Install Add-on From File...'
 4. Navigate to the .zip file you downloaded in step 1 and click open.
