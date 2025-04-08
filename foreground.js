@@ -1,5 +1,13 @@
+// Function to check if current URL is a Canvas page
+function isCanvasPage() {
+  return window.location.href.includes('canvas.acu.edu.au');
+}
+
 // Function to show alt text on images
 function showAltText() {
+  // Only proceed if we're on a Canvas page
+  if (!isCanvasPage()) return;
+  
   const images = document.querySelectorAll('img');
   images.forEach((img) => {
       // Only add alt text if it doesn't already exist
@@ -26,8 +34,7 @@ function showAltText() {
           
           img.parentNode.appendChild(altText);
       }
-    })
-
+  })
 }
 
 // Function to hide alt text
