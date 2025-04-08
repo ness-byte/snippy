@@ -7,8 +7,11 @@
   "browser_specific_settings": {
     "gecko": {
     "id": "snippy@nessbyte.anonaddy.me"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors 'none'; default-src 'none'; connect-src https://api.github.com;"
     }
-  },
+},
   
   "action": {
     "default_popup": "popup.html",
@@ -37,7 +40,7 @@
 
   "storage": {
   },
-  
+
   "host_permissions": [
     "https://api.github.com/*",
     "https://raw.githubusercontent.com/*"
